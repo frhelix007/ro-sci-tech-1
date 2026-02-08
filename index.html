@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdTech | AI Smart Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- CSS STYLING --- */
+        :root {
+            --primary: #4f46e5;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --chat-user: #4f46e5;
+            --chat-bot: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        
+        body { display: flex; height: 100vh; background-color: var(--bg); overflow: hidden; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px; background-color: var(--white); border-right: 1px solid #cbd5e1;
+            display: flex; flex-direction: column; padding: 20px;
+        }
+        .logo {
+            font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 30px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .nav-item {
+            padding: 12px 15px; margin-bottom: 8px; color: #64748b; cursor: pointer;
+            border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 10px;
+            transition: 0.3s;
+        }
+        .nav-item:hover, .nav-item.active { background-color: #e0e7ff; color: var(--primary); }
+
+        /* MAIN CONTENT */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .section { display: none; animation: fadeIn 0.4s; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CARDS */
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h2 { margin-bottom: 15px; color: #1e293b; }
+        input, select, textarea {
+            width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 15px;
+        }
+        .btn {
+            background: var(--primary); color: white; padding: 10px 20px; border: none; border-radius: 6px;
+            cursor: pointer; font-weight: 600;
+        }
+        .btn:hover { opacity: 0.9; }
+
+        /* GEMINI CHAT STYLES */
+        .chat-container { height: 450px; display: flex; flex-direction: column; border: 1px solid #cbd5e1; border-radius: 10px; background: white; }
+        .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 80%; padding: 12px 16px; border-radius: 15px; font-size: 0.95rem; line-height: 1.5; }
+        .user-msg { align-self: flex-end; background: var(--chat-user); color: white; border-bottom-right-radius: 2px; }
+        .bot-msg { align-self: flex-start; background: var(--chat-bot); color: #1e293b; border-bottom-left-radius: 2px; }
+        .input-area { padding: 15px; border-top: 1px solid #cbd5e1; display: flex; gap: 10px; background: #f8fafc; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;}
+        
+        /* Markdown formatting for AI response */
+        .bot-msg strong { font-weight: bold; }
+        .bot-msg ul { padding-left: 20px; margin: 10px 0; }
+
+        /* PROGRESS HIDDEN STATE */
+        .locked-overlay {
+            text-align: center; padding: 50px; background: #f1f5f9; border-radius: 10px; border: 2px dashed #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo"><i class="fas fa-brain"></i> EdTech AI</div>
+        <div class="nav-item active" onclick="showSection('profile', this)"><i class="fas fa-user-circle"></i> Student Profile</div>
+        <div class="nav-item" onclick="showSection('gemini', this)"><i class="fas fa-sparkles"></i> Gemini AI Tutor</div>
+        <div class="nav-item" onclick="showSection('tests', this)"><i class="fas fa-file-alt"></i> Test Papers</div>
+        <div class="nav-item" onclick="showSection('notes', this)"><i class="fas fa-sticky-note"></i> Smart Notes</div>
+        <div class="nav-item" onclick="showSection('progress', this)"><i class="fas fa-chart-line"></i> Progress Report</div>
+    </div>
+
+    <div class="main-content">
+
+        <div id="profile" class="section active">
+            <h2>Student Profile</h2>
+            <div id="profileEdit" class="card">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div><label>Student Name</label><input type="text" id="pName" placeholder="Full Name"></div>
+                    <div><label>Class</label><input type="text" id="pClass" placeholder="e.g. 10th"></div>
+                    <div><label>Student Mobile</label><input type="tel" id="pStuMob" placeholder="Student Phone"></div>
+                    <div><label>Parent Mobile</label><input type="tel" id="pParMob" placeholder="Parent Phone"></div>
+                    <div><label>Email</label><input type="email" id="pEmail" placeholder="student@email.com"></div>
+                    <div>
+                        <label>Select Subjects (Hold Ctrl to select multiple)</label>
+                        <select id="pSubjects" multiple style="height: 100px;">
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Physics">Physics</option>
+                            <option value="Chemistry">Chemistry</option>
+                            <option value="English">English</option>
+                            <option value="Computer Science">Computer Science</option>
+                        </select>
+                    </div>
+                </div>
+                <label>Address</label>
+                <textarea id="pAddr" rows="2"></textarea>
+                <button class="btn" onclick="saveProfile()">Save Profile</button>
+            </div>
+            
+            <div id="profileView" class="card" style="display:none; text-align:center;">
+                <h3><i class="fas fa-user-check"></i> <span id="dName">Name</span></h3>
+                <p>Subjects: <span id="dSubjects">-</span></p>
+                <button class="btn" onclick="editProfile()" style="margin-top:10px; background:#64748b;">Edit</button>
+            </div>
+        </div>
+
+        <div id="gemini" class="section">
+            <h2><i class="fas fa-robot"></i> Ask Google Gemini</h2>
+            <div class="card">
+                <p style="margin-bottom:10px; color:#64748b;">Ask any question about your syllabus, homework, or doubts.</p>
+                <div class="chat-container">
+                    <div class="chat-box" id="chatHistory">
+                        <div class="msg bot-msg">Hello! I am Google Gemini. What can I help you learn today?</div>
+                    </div>
+                    <div class="input-area">
+                        <input type="text" id="geminiInput" placeholder="Type your doubt here..." style="margin-bottom:0;" onkeypress="handleEnter(event)">
+                        <button class="btn" onclick="callGeminiAPI()">Send <i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tests" class="section">
+            <h2>Test Center</h2>
+            <div class="card">
+                <p>Select a subject to take a test (Based on Profile).</p>
+                <select id="testSubjectSelector" onchange="loadTestLink()">
+                    <option value="">-- Select Subject --</option>
+                </select>
+                
+                <div id="testArea" style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                    <h3>Ready?</h3>
+                    <p>1. Click "Open Test" to fill the Google Form.</p>
+                    <p>2. Come back here and click "Mark as Completed" to see your Progress.</p>
+                    <br>
+                    <div style="display:flex; gap:10px;">
+                        <a id="testLink" href="#" target="_blank" class="btn">Open Test</a>
+                        <button class="btn" style="background:#10b981;" onclick="markTestComplete()">Mark as Completed</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="notes" class="section">
+            <h2>My Smart Notes</h2>
+            <div class="card">
+                <textarea id="noteArea" style="height: 300px;" placeholder="Type notes here..."></textarea>
+                <button class="btn" onclick="saveNotes()">Save Notes</button>
+            </div>
+        </div>
+
+        <div id="progress" class="section">
+            <h2>Progress Monitor</h2>
+            
+            <div id="progressLocked" class="locked-overlay">
+                <i class="fas fa-lock" style="font-size:3rem; color:#cbd5e1;"></i>
+                <h3 style="margin-top:10px; color:#64748b;">No Data Available</h3>
+                <p>You must attend and complete a test in the "Test Papers" section to view your progress.</p>
+            </div>
+
+            <div id="progressUnlocked" class="card" style="display:none;">
+                <h3><i class="fas fa-check-circle" style="color:#10b981;"></i> Test Completed</h3>
+                <br>
+                <div style="margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between;"><b>Attendance Status</b> <span style="color:#10b981;">Present</span></div>
+                    <div style="width:100%; height:10px; background:#e2e8f0; border-radius:5px; margin-top:5px;">
+                        <div style="width:100%; height:100%; background:#10b981; border-radius:5px;"></div>
+                    </div>
+                </div>
+                
+                <h4>Send Report</h4>
+                <p style="color:grey; font-size:0.9rem; margin-bottom:10px;">Notify parents via Mobile/Email.</p>
+                <button class="btn" style="background:#25D366;" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                <button class="btn" style="background:#ea4335;" onclick="sendEmail()"><i class="fas fa-envelope"></i> Email</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // *** CONFIGURATION ***
+        // ---------------------------------------------------------
+        // PASTE YOUR KEY HERE INSIDE THE QUOTES vvv
+        const API_KEY = "PASTE_YOUR_KEY_HERE"; 
+        // ---------------------------------------------------------
+
+        // --- NAVIGATION ---
+        function showSection(id, el) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+        }
+
+        // --- PROFILE SYSTEM ---
+        function saveProfile() {
+            let selectedOpts = Array.from(document.getElementById('pSubjects').selectedOptions).map(opt => opt.value);
+            const data = {
+                name: document.getElementById('pName').value,
+                stuMob: document.getElementById('pStuMob').value,
+                parMob: document.getElementById('pParMob').value,
+                email: document.getElementById('pEmail').value,
+                subjects: selectedOpts
+            };
+            if(!data.name || selectedOpts.length === 0) { alert("Fill Name & Select Subjects"); return; }
+            localStorage.setItem('studentProfile', JSON.stringify(data));
+            loadProfile();
+        }
+
+        function loadProfile() {
+            const data = JSON.parse(localStorage.getItem('studentProfile'));
+            if(data) {
+                document.getElementById('profileEdit').style.display = 'none';
+                document.getElementById('profileView').style.display = 'block';
+                document.getElementById('dName').innerText = data.name;
+                document.getElementById('dSubjects').innerText = data.subjects.join(', ');
+                updateTestDropdown(data.subjects);
+            }
+        }
+        function editProfile() {
+            document.getElementById('profileEdit').style.display = 'block';
+            document.getElementById('profileView').style.display = 'none';
+        }
+
+        // --- GEMINI AI INTEGRATION (REAL) ---
+        function handleEnter(e) { if(e.key === 'Enter') callGeminiAPI(); }
+
+        async function callGeminiAPI() {
+            const input = document.getElementById('geminiInput');
+            const chatHistory = document.getElementById('chatHistory');
+            const userText = input.value;
+            
+            if (!userText) return;
+
+            // 1. Show User Message
+            chatHistory.innerHTML += `<div class="msg user-msg">${userText}</div>`;
+            input.value = "";
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            if (API_KEY === "PASTE_YOUR_KEY_HERE" || API_KEY === "") {
+                chatHistory.innerHTML += `<div class="msg bot-msg" style="color:red;">Error: You forgot to paste your API Key in the code!</div>`;
+                return;
+            }
+
+            // 2. Call Google API
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+            
+            // Add Loading Bubble
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = "msg bot-msg";
+            loadingDiv.innerText = "Thinking...";
+            loadingDiv.id = "loading";
+            chatHistory.appendChild(loadingDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: userText }] }] })
+                });
+
+                const data = await response.json();
+                document.getElementById('loading').remove();
+                
+                // Extract Text
+                if (data.candidates && data.candidates[0].content) {
+                    const botReply = data.candidates[0].content.parts[0].text;
+                    // Basic formatting cleanup
+                    const formattedReply = botReply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); 
+                    chatHistory.innerHTML += `<div class="msg bot-msg">${formattedReply}</div>`;
+                } else {
+                    chatHistory.innerHTML += `<div class="msg bot-msg">I encountered an error. Please try again.</div>`;
+                }
+                
+            } catch (error) {
+                document.getElementById('loading').innerHTML = "Error: Check your Internet connection.";
+            }
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        // --- TEST & PROGRESS LOGIC ---
+        function updateTestDropdown(subjects) {
+            const select = document.getElementById('testSubjectSelector');
+            select.innerHTML = '<option value="">-- Select Subject --</option>';
+            subjects.forEach(sub => {
+                let opt = document.createElement('option');
+                opt.value = sub; opt.innerText = sub;
+                select.appendChild(opt);
+            });
+        }
+
+        function loadTestLink() {
+            const subject = document.getElementById('testSubjectSelector').value;
+            const link = document.getElementById('testLink');
+            
+            if(subject) {
+                document.getElementById('testArea').style.display = 'block';
+                // Replace with real Google Forms
+                link.href = "https://docs.google.com/forms/"; 
+            }
+        }
+
+        function markTestComplete() {
+            localStorage.setItem('testStatus', 'completed');
+            alert("Test Marked as Completed! Check Progress Tab.");
+            checkProgress();
+        }
+
+        function checkProgress() {
+            const status = localStorage.getItem('testStatus');
+            if(status === 'completed') {
+                document.getElementById('progressLocked').style.display = 'none';
+                document.getElementById('progressUnlocked').style.display = 'block';
+            }
+        }
+
+        // --- NOTIFICATIONS ---
+        function sendWhatsApp() {
+            const data = JSON.parse(localStorage.getItem('studentProfile'));
+            if(!data || !data.parMob) { alert("Parent Mobile Missing!"); return; }
+            window.open(`https://wa.me/${data.parMob}?text=Test Attended. Status: Present.`, '_blank');
+        }
+
+        function sendEmail() {
+            const data = JSON.parse(localStorage.getItem('studentProfile'));
+            if(!data || !data.email) { alert("Email Missing!"); return; }
+            window.location.href = `mailto:${data.email}?subject=Test Attendance&body=Student has attended the test.`;
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            loadProfile();
+            checkProgress();
+            if(localStorage.getItem('myNotes')) document.getElementById('noteArea').value = localStorage.getItem('myNotes');
+        }
+        function saveNotes() {
+            localStorage.setItem('myNotes', document.getElementById('noteArea').value);
+            alert("Notes Saved!");
+        }
+    </script>
+</body>
+</html>
