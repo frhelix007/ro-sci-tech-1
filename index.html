@@ -352,22 +352,12 @@
             localStorage.setItem('myNotes', document.getElementById('noteArea').value);
             alert("Notes Saved!");
         }
-        function renderNotes() {
-            const rawNotes = document.getElementById('noteArea').value;
-            const displayArea = document.getElementById('notesDisplay'); // Create this div in your HTML
-            
-            // Convert Markdown to HTML
-            let htmlContent = marked.parse(rawNotes);
-            
-            displayArea.innerHTML = htmlContent;
-            
-            // Tell MathJax to look for new math to render
-            MathJax.typesetPromise();
-        }
+        
     </script>
 </body>
 
 </html>
+
 
 
 
