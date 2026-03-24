@@ -1,342 +1,2658 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EdTech | AI Smart Portal</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #4f46e5;
-            --bg: #f8fafc;
-            --white: #ffffff;
-            --chat-user: #4f46e5;
-            --chat-bot: #e2e8f0;
-            --border: #cbd5e1;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        
-        body { display: flex; height: 100vh; background-color: var(--bg); overflow: hidden; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EdTech AI — Student Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06080f;--panel:#0d1220;--card:#111827;--border:rgba(99,179,255,0.13);
+  --accent:#3b9eff;--accent2:#00e5c3;--accent3:#a855f7;--warn:#f59e0b;--error:#ff5e7a;--success:#22c55e;
+  --text:#e8f0ff;--muted:#7a8fb8;--radius:14px;
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+}
+html,body{height:100%;font-family:var(--fb);background:var(--bg);color:var(--text);overflow-x:hidden}
 
-        /* SIDEBAR */
-        .sidebar {
-            width: 260px; background-color: var(--white); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; padding: 20px;
-        }
-        .logo {
-            font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 30px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .nav-item {
-            padding: 12px 15px; margin-bottom: 8px; color: #64748b; cursor: pointer;
-            border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 10px;
-            transition: 0.3s;
-        }
-        .nav-item:hover, .nav-item.active { background-color: #e0e7ff; color: var(--primary); }
+/* ══ BG ══ */
+.bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(140px);opacity:.13;animation:drift 18s ease-in-out infinite alternate}
+.o1{width:700px;height:700px;background:#1a4fff;top:-250px;left:-250px}
+.o2{width:580px;height:580px;background:#00d4aa;bottom:-200px;right:-200px;animation-delay:-8s}
+.o3{width:400px;height:400px;background:#7b2fff;top:30%;left:45%;animation-delay:-4s}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(50px,-40px)}}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(59,158,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,158,255,.03) 1px,transparent 1px);
+  background-size:60px 60px}
 
-        /* MAIN CONTENT */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
-        .section { display: none; animation: fadeIn 0.4s; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* ══ SCREENS ══ */
+.screen{position:relative;z-index:1;display:none;min-height:100vh}
+.screen.active{display:flex}
 
-        /* CARDS & UI ELEMENTS */
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h2 { margin-bottom: 15px; color: #1e293b; }
-        h4 { margin-bottom: 8px; color: #475569; }
-        input, select, textarea {
-            width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 15px;
-        }
-        .btn {
-            background: var(--primary); color: white; padding: 10px 20px; border: none; border-radius: 6px;
-            cursor: pointer; font-weight: 600; transition: 0.2s;
-        }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+/* ══ LOGIN SCREEN ══ */
+#loginScreen{align-items:stretch}
+.login-hero{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  padding:60px 64px;position:relative;overflow:hidden;
+}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:64px}
+.logo-icon{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:24px}
+.logo-name{font-family:var(--fh);font-weight:800;font-size:22px;letter-spacing:-.5px}
+.logo-name em{font-style:normal;color:var(--accent2)}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:100px;padding:6px 16px;font-size:11px;color:var(--accent2);letter-spacing:.1em;text-transform:uppercase;width:fit-content;margin-bottom:24px}
+.hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:blink 1.8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.login-hero h1{font-family:var(--fh);font-size:clamp(36px,4vw,54px);font-weight:800;line-height:1.08;letter-spacing:-1.5px}
+.login-hero h1 mark{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-p{margin-top:16px;max-width:400px;font-size:15px;line-height:1.7;color:var(--muted)}
+.hero-stats{display:flex;gap:32px;margin-top:44px}
+.hs-item{display:flex;flex-direction:column;gap:3px}
+.hs-num{font-family:var(--fh);font-size:26px;font-weight:800;letter-spacing:-1px}
+.hs-num em{font-style:normal;color:var(--accent2)}
+.hs-lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.hero-bottom{position:absolute;bottom:44px;left:64px;right:64px;background:rgba(13,18,32,.85);border:1px solid var(--border);border-radius:14px;padding:16px 20px;backdrop-filter:blur(16px);display:flex;align-items:center;gap:14px}
+.hero-bottom .hb-icon{font-size:28px;flex-shrink:0}
+.hb-text strong{display:block;font-size:13px;font-weight:600}
+.hb-text span{font-size:12px;color:var(--muted)}
+.hb-badge{margin-left:auto;background:rgba(0,229,195,.12);border:1px solid rgba(0,229,195,.3);color:var(--accent2);border-radius:100px;padding:4px 12px;font-size:11px;font-weight:600;flex-shrink:0}
 
-        /* CHAT STYLES */
-        .chat-container { height: 450px; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 10px; background: white; }
-        .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .msg { max-width: 80%; padding: 12px 16px; border-radius: 15px; font-size: 0.95rem; line-height: 1.5; }
-        .user-msg { align-self: flex-end; background: var(--chat-user); color: white; border-bottom-right-radius: 2px; }
-        .bot-msg { align-self: flex-start; background: var(--chat-bot); color: #1e293b; border-bottom-left-radius: 2px; }
-        
-        /* NOTES GRID */
-        .notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        #notesDisplay { 
-            height: 400px; overflow-y: auto; border: 1px solid var(--border); 
-            background: #fdfdfd; padding: 15px; border-radius: 6px;
-        }
+/* Right panel — scrollable */
+.login-form-wrap{
+  width:500px;
+  flex-shrink:0;
+  overflow-y:auto;
+  padding:40px 44px;
+  background:rgba(13,18,32,.7);
+  border-left:1px solid var(--border);
+  backdrop-filter:blur(24px);
+}
+.lf-card{width:100%}
+.lf-head{margin-bottom:24px;text-align:center}
+.lf-head h2{font-family:var(--fh);font-size:26px;font-weight:800;letter-spacing:-.5px}
+.lf-head p{font-size:13px;color:var(--muted);margin-top:6px}
 
-        .locked-overlay {
-            text-align: center; padding: 50px; background: #f1f5f9; border-radius: 10px; border: 2px dashed var(--border);
-        }
-    </style>
+.role-tabs{display:flex;gap:6px;margin-bottom:20px}
+.rt{flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);background:transparent;font-family:var(--fb);font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;text-align:center}
+.rt.on{background:rgba(59,158,255,.12);border-color:var(--accent);color:var(--accent)}
+
+/* Role sections — toggled via JS style.display */
+.role-section{display:none}
+.role-section.show{display:block}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.iw{position:relative}
+.ii{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.45;pointer-events:none}
+input[type=text],input[type=email],input[type=password],input[type=tel],select,textarea{
+  width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--radius);
+  padding:12px 12px 12px 40px;font-family:var(--fb);font-size:13px;color:var(--text);
+  outline:none;appearance:none;transition:border-color .2s,background .2s,box-shadow .2s}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.6}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);background:rgba(59,158,255,.06);box-shadow:0 0 0 3px rgba(59,158,255,.12)}
+select option{background:#131c30;color:var(--text)}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px}
+.pw-eye:hover{color:var(--accent)}
+
+.chips2{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.chip2{padding:5px 11px;border-radius:100px;border:1px solid var(--border);font-size:11px;color:var(--muted);cursor:pointer;user-select:none;transition:all .18s;background:transparent}
+.chip2:hover{border-color:var(--accent);color:var(--accent)}
+.chip2.on{background:rgba(59,158,255,.15);border-color:var(--accent);color:var(--accent)}
+
+/* ── Student type selector ── */
+.stype-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.stype-card{padding:12px 10px;border-radius:12px;border:1px solid var(--border);background:transparent;cursor:pointer;transition:all .22s;text-align:center;user-select:none}
+.stype-card:hover{border-color:rgba(99,179,255,.4);background:rgba(59,158,255,.04)}
+.stype-card.on{border-color:var(--accent);background:rgba(59,158,255,.1)}
+.stype-card .stc-icon{font-size:22px;margin-bottom:5px}
+.stype-card .stc-label{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--text)}
+.stype-card .stc-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+.rowbet{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.rem{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer}
+.rem input{width:14px;height:14px;padding:0;accent-color:var(--accent);cursor:pointer}
+.fgot{font-size:12px;color:var(--accent);text-decoration:none}
+.fgot:hover{text-decoration:underline}
+
+.lerr{display:none;margin-bottom:14px;padding:10px 13px;border-radius:10px;background:rgba(255,94,122,.1);border:1px solid rgba(255,94,122,.3);color:var(--error);font-size:12px}
+
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#1a78db);border:none;border-radius:var(--radius);font-family:var(--fh);font-size:14px;font-weight:700;color:#fff;cursor:pointer;letter-spacing:.02em;transition:opacity .2s,transform .15s,box-shadow .2s;box-shadow:0 4px 20px rgba(59,158,255,.3)}
+.btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 28px rgba(59,158,255,.4)}
+.btn.secondary{background:rgba(255,255,255,.07);box-shadow:none;color:var(--muted)}
+.btn.sm{padding:10px 18px;font-size:13px;width:auto}
+.btn.danger{background:linear-gradient(135deg,var(--error),#c0392b)}
+.btn.success{background:linear-gradient(135deg,var(--success),#16a34a)}
+
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:11px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.reg-link{text-align:center;font-size:12px;color:var(--muted);margin-top:16px}
+.reg-link a{color:var(--accent);text-decoration:none;font-weight:500}
+
+/* ══ APP SHELL ══ */
+#appScreen{flex-direction:row}
+
+/* sidebar */
+.sidebar{width:240px;flex-shrink:0;background:rgba(13,18,32,.9);border-right:1px solid var(--border);backdrop-filter:blur(20px);display:flex;flex-direction:column;padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:0 20px 24px;border-bottom:1px solid var(--border)}
+.sb-logo-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px}
+.sb-logo-name{font-family:var(--fh);font-weight:800;font-size:17px;letter-spacing:-.3px}
+.sb-logo-name em{font-style:normal;color:var(--accent2)}
+
+.sb-section{padding:16px 20px 8px;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:12px;padding:10px 20px;cursor:pointer;transition:all .2s;border-left:3px solid transparent;margin:1px 0}
+.sb-item:hover{background:rgba(59,158,255,.06);color:var(--text)}
+.sb-item.on{background:rgba(59,158,255,.1);border-left-color:var(--accent);color:var(--accent)}
+.sb-item .si{font-size:18px;flex-shrink:0}
+.sb-item .sl{font-size:13px;font-weight:500}
+.sb-item .sb-badge{margin-left:auto;background:var(--accent);color:#fff;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700}
+
+.sb-user{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border)}
+.sb-user-info{display:flex;align-items:center;gap:10px}
+.sb-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600}
+.sb-urole{font-size:11px;color:var(--muted)}
+.sb-logout{margin-top:10px;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;padding:6px 0}
+.sb-logout:hover{color:var(--error)}
+
+/* main */
+.main{flex:1;overflow-y:auto;padding:32px}
+.page-title{font-family:var(--fh);font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px}
+.card-title{font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+/* stat cards */
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;opacity:.08}
+.stat-card.ac::after{background:var(--accent)}
+.stat-card.a2::after{background:var(--accent2)}
+.stat-card.a3::after{background:var(--accent3)}
+.stat-card.aw::after{background:var(--warn)}
+.sc-icon{font-size:28px;margin-bottom:10px}
+.sc-val{font-family:var(--fh);font-size:28px;font-weight:800;letter-spacing:-1px}
+.sc-lab{font-size:12px;color:var(--muted);margin-top:3px}
+
+/* tabs */
+.tabs{display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap}
+.tab{padding:8px 16px;border-radius:100px;border:1px solid var(--border);background:transparent;font-family:var(--fb);font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(99,179,255,.4);color:var(--text)}
+.tab.on{background:rgba(59,158,255,.15);border-color:var(--accent);color:var(--accent)}
+
+/* ══ NOTES ══ */
+.subject-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.spill{padding:7px 16px;border-radius:100px;border:1px solid var(--border);font-size:12px;color:var(--muted);cursor:pointer;transition:all .2s;background:transparent}
+.spill:hover{border-color:var(--accent2);color:var(--accent2)}
+.spill.on{background:rgba(0,229,195,.12);border-color:var(--accent2);color:var(--accent2)}
+
+.notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:16px}
+.note-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:all .2s;position:relative}
+.note-card:hover{border-color:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.nc-subject{display:inline-block;font-size:10px;font-weight:600;padding:3px 10px;border-radius:100px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.07em}
+.nc-title{font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:6px}
+.nc-preview{font-size:12px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nc-meta{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:11px;color:var(--muted)}
+.nc-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:6px}
+.nc-del:hover{color:var(--error);background:rgba(255,94,122,.1)}
+
+.note-editor{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px}
+.ne-top{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.ne-top input{flex:1;min-width:200px}
+.ne-top select{width:160px}
+textarea.note-body{width:100%;min-height:120px;resize:vertical;padding:12px;border-radius:10px;font-size:13px;line-height:1.6}
+
+/* ══ AI SEARCH ══ */
+.ai-search-bar{display:flex;gap:10px;margin-top:16px}
+.ai-search-bar input{flex:1;font-size:14px;padding:14px 14px 14px 44px;border-radius:12px}
+.ai-search-bar button{flex-shrink:0;padding:0 24px;border-radius:12px}
+.ai-chat{display:flex;flex-direction:column;gap:16px;max-height:420px;overflow-y:auto;padding-right:4px;scroll-behavior:smooth}
+.ai-msg{display:flex;gap:12px;animation:up .3s ease both}
+.ai-msg.user{flex-direction:row-reverse}
+.ai-bubble{max-width:75%;padding:14px 18px;border-radius:14px;font-size:13px;line-height:1.6}
+.ai-msg.bot .ai-bubble{background:rgba(59,158,255,.1);border:1px solid rgba(59,158,255,.2);border-bottom-left-radius:4px}
+.ai-msg.user .ai-bubble{background:rgba(59,158,255,.2);border:1px solid rgba(59,158,255,.3);border-bottom-right-radius:4px}
+.ai-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ai-avatar.bot{background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.ai-avatar.user{background:linear-gradient(135deg,var(--accent3),#7c3aed)}
+.ai-typing{display:flex;gap:5px;align-items:center;padding:14px 18px}
+.ai-typing span{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typing .9s ease-in-out infinite}
+.ai-typing span:nth-child(2){animation-delay:.15s}
+.ai-typing span:nth-child(3){animation-delay:.3s}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+.ai-suggestions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.ai-sug{padding:8px 14px;border-radius:100px;border:1px solid var(--border);font-size:12px;color:var(--muted);cursor:pointer;transition:all .2s;background:transparent}
+.ai-sug:hover{border-color:var(--accent);color:var(--accent);background:rgba(59,158,255,.06)}
+
+/* ══ TEST ══ */
+.test-list{display:flex;flex-direction:column;gap:14px}
+.test-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .2s}
+.test-item:hover{border-color:var(--accent);transform:translateX(4px)}
+.ti-icon{font-size:28px;flex-shrink:0}
+.ti-info{flex:1}
+.ti-title{font-family:var(--fh);font-size:15px;font-weight:700}
+.ti-meta{font-size:12px;color:var(--muted);margin-top:3px}
+.ti-badge{padding:5px 14px;border-radius:100px;font-size:11px;font-weight:600;flex-shrink:0}
+.ti-badge.new{background:rgba(59,158,255,.15);border:1px solid rgba(59,158,255,.3);color:var(--accent)}
+.ti-badge.done{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--success)}
+
+/* exam view */
+.exam-view{display:none}
+.exam-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:14px}
+.exam-timer{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--warn)}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:16px}
+.q-num{font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em}
+.q-text{font-size:15px;font-weight:500;margin-bottom:16px;line-height:1.5}
+.q-options{display:flex;flex-direction:column;gap:10px}
+.q-opt{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.q-opt:hover{border-color:var(--accent);background:rgba(59,158,255,.06)}
+.q-opt.selected{border-color:var(--accent);background:rgba(59,158,255,.12)}
+.q-opt.correct{border-color:var(--success);background:rgba(34,197,94,.1)}
+.q-opt.wrong{border-color:var(--error);background:rgba(255,94,122,.1)}
+.q-opt input[type=radio]{accent-color:var(--accent);width:16px;height:16px;flex-shrink:0}
+.q-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.q-dot.answered{background:var(--accent)}
+
+/* ══ RESULT ══ */
+.result-hero{text-align:center;padding:32px;background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:20px}
+.result-ring{width:140px;height:140px;margin:0 auto 20px;position:relative}
+.result-ring svg{transform:rotate(-90deg)}
+.result-pct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--fh);font-size:28px;font-weight:800}
+.result-grade{display:inline-block;padding:6px 18px;border-radius:100px;font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:12px}
+.result-table{width:100%;border-collapse:collapse;font-size:13px}
+.result-table th{text-align:left;padding:10px 14px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)}
+.result-table td{padding:10px 14px;border-bottom:1px solid rgba(99,179,255,.06)}
+.result-table tr:last-child td{border-bottom:none}
+.pill{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600}
+.pill.pass{background:rgba(34,197,94,.12);color:var(--success)}
+.pill.fail{background:rgba(255,94,122,.1);color:var(--error)}
+.pill.avg{background:rgba(245,158,11,.1);color:var(--warn)}
+.parent-card{background:linear-gradient(135deg,rgba(59,158,255,.08),rgba(0,229,195,.06));border:1px solid rgba(59,158,255,.2);border-radius:14px;padding:20px;margin-top:16px}
+.parent-card h3{font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:12px}
+
+/* ══ ATTENDANCE ══ */
+.att-subject-row{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:14px}
+.att-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.att-name{font-family:var(--fh);font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.att-pct{font-family:var(--fh);font-size:20px;font-weight:800}
+.att-bar-bg{height:8px;border-radius:100px;background:rgba(255,255,255,.06);overflow:hidden}
+.att-bar{height:100%;border-radius:100px;transition:width .8s cubic-bezier(.34,1.56,.64,1)}
+.att-days{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
+.att-day{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600}
+.att-day.p{background:rgba(34,197,94,.15);color:var(--success);border:1px solid rgba(34,197,94,.25)}
+.att-day.a{background:rgba(255,94,122,.1);color:var(--error);border:1px solid rgba(255,94,122,.2)}
+.att-day.h{background:rgba(245,158,11,.1);color:var(--warn);border:1px solid rgba(245,158,11,.2)}
+.att-legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-bottom:20px}
+.att-legend span{display:flex;align-items:center;gap:6px}
+.att-legend span::before{content:'';width:10px;height:10px;border-radius:3px}
+.l-p::before{background:rgba(34,197,94,.4)!important}
+.l-a::before{background:rgba(255,94,122,.4)!important}
+.l-h::before{background:rgba(245,158,11,.4)!important}
+
+/* ══ DASHBOARD ══ */
+.welcome-banner{border:1px solid rgba(59,158,255,.2);border-radius:16px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;transition:background 1.2s ease,border-color 1.2s ease;position:relative;overflow:hidden}
+.welcome-banner::before{content:'';position:absolute;inset:0;opacity:.06;pointer-events:none;transition:background 1.2s ease}
+.wb-morning{background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(251,191,36,.08));border-color:rgba(245,158,11,.3)!important}
+.wb-morning::before{background:radial-gradient(ellipse at top right,#fbbf24,transparent)}
+.wb-afternoon{background:linear-gradient(135deg,rgba(59,158,255,.15),rgba(14,165,233,.08));border-color:rgba(59,158,255,.3)!important}
+.wb-afternoon::before{background:radial-gradient(ellipse at top right,#0ea5e9,transparent)}
+.wb-evening{background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(236,72,153,.08));border-color:rgba(168,85,247,.3)!important}
+.wb-evening::before{background:radial-gradient(ellipse at top right,#a855f7,transparent)}
+.wb-night{background:linear-gradient(135deg,rgba(30,41,59,.6),rgba(15,23,42,.4));border-color:rgba(99,179,255,.15)!important}
+.wb-night::before{background:radial-gradient(ellipse at top right,#1e3a5f,transparent)}
+.wb-text h2{font-family:var(--fh);font-size:22px;font-weight:800;margin-bottom:4px}
+.wb-text p{font-size:13px;color:var(--muted)}
+.wb-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.wb-icon{font-size:42px;line-height:1;transition:all .5s ease}
+.live-clock{font-family:var(--fh);font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1;text-align:right}
+.live-date{font-size:11px;color:var(--muted);text-align:right;letter-spacing:.04em}
+.live-period{font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:.08em;margin-top:2px;display:inline-block;text-align:right}
+.period-morning{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+.period-afternoon{background:rgba(59,158,255,.15);color:var(--accent);border:1px solid rgba(59,158,255,.3)}
+.period-evening{background:rgba(168,85,247,.15);color:#c084fc;border:1px solid rgba(168,85,247,.3)}
+.period-night{background:rgba(99,179,255,.08);color:var(--muted);border:1px solid rgba(99,179,255,.15)}
+.wb-icon{font-size:52px}
+
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(99,179,255,.06)}
+.activity-item:last-child{border-bottom:none}
+.ai-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ai-txt{font-size:13px;line-height:1.5}
+.ai-time{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* misc */
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:up .4s ease both}
+.mt16{margin-top:16px}
+.mb16{margin-bottom:16px}
+.flex{display:flex;align-items:center;gap:10px}
+.flex-1{flex:1}
+.hidden{display:none!important}
+
+/* mobile */
+@media(max-width:768px){
+  .login-hero{display:none}
+  .login-form-wrap{width:100%;border-left:none;padding:24px 20px;min-height:100vh;align-items:flex-start}
+  .sidebar{width:60px}
+  .sb-logo-name,.sl,.sb-section,.sb-uname,.sb-urole,.sb-logout,.hb-text{display:none}
+  .main{padding:20px 14px}
+}
+</style>
 </head>
 <body>
+<div class="bg-fx"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+<div class="grid-bg"></div>
 
-    <div class="sidebar">
-        <div class="logo"><i class="fas fa-brain"></i> EdTech AI</div>
-        <div class="nav-item active" onclick="showSection('profile', this)"><i class="fas fa-user-circle"></i> Student Profile</div>
-        <div class="nav-item" onclick="showSection('gemini', this)"><i class="fas fa-sparkles"></i> Gemini AI Tutor</div>
-        <div class="nav-item" onclick="showSection('tests', this)"><i class="fas fa-file-alt"></i> Test Papers</div>
-        <div class="nav-item" onclick="showSection('notes', this)"><i class="fas fa-sticky-note"></i> Smart Notes</div>
-        <div class="nav-item" onclick="showSection('progress', this)"><i class="fas fa-chart-line"></i> Progress Report</div>
+<!-- ══════════ LOGIN SCREEN ══════════ -->
+<div class="screen active" id="loginScreen">
+  <div class="login-hero">
+    <div class="logo"><div class="logo-icon">🎓</div><div class="logo-name">EdTech <em>AI</em></div></div>
+    <div class="hero-tag">AI-Powered Education Platform</div>
+    <h1>Learn Smarter,<br>Grow <mark>Faster</mark></h1>
+    <p class="hero-p">Notes, AI doubt-solving, mock tests, results & attendance — everything a student needs in one intelligent platform.</p>
+    <div class="hero-stats">
+      <div class="hs-item"><div class="hs-num">50<em>K+</em></div><div class="hs-lab">Students</div></div>
+      <div class="hs-item"><div class="hs-num">98<em>%</em></div><div class="hs-lab">Pass Rate</div></div>
+      <div class="hs-item"><div class="hs-num">24<em>/7</em></div><div class="hs-lab">AI Tutor</div></div>
+    </div>
+    <div class="hero-bottom">
+      <div class="hb-icon">🤖</div>
+      <div class="hb-text"><strong>AI Tutor Online</strong><span>Ask any doubt, get instant step-by-step answers</span></div>
+      <div class="hb-badge">Live</div>
+    </div>
+  </div>
+
+  <div class="login-form-wrap">
+    <div class="lf-card">
+      <div class="lf-head"><h2>Welcome Back 👋</h2><p>Sign in to your EdTech AI account</p></div>
+
+      <!-- Role tabs -->
+      <div class="role-tabs">
+        <button class="rt on" onclick="setRole('student',this)">🎒 Student</button>
+        <button class="rt" onclick="setRole('parent',this)">👨‍👩‍👧 Parent</button>
+        <button class="rt" onclick="setRole('teacher',this)">👩‍🏫 Teacher</button>
+      </div>
+
+      <!-- Error box -->
+      <div id="lerr" class="lerr"></div>
+
+      <!-- ── STUDENT SECTION ── -->
+      <div class="role-section show" id="sf">
+
+        <div class="field">
+          <label>Student Name</label>
+          <div class="iw"><span class="ii">👤</span><input type="text" id="sName" placeholder="Your full name"/></div>
+        </div>
+
+        <!-- School / College choice -->
+        <div class="field">
+          <label>I am a</label>
+          <div class="stype-wrap">
+            <div class="stype-card on" id="stSchool" onclick="setStudentType('school')">
+              <div class="stc-icon">🏫</div>
+              <div class="stc-label">School Student</div>
+              <div class="stc-sub">Class 6 – 12</div>
+            </div>
+            <div class="stype-card" id="stCollege" onclick="setStudentType('college')">
+              <div class="stc-icon">🎓</div>
+              <div class="stc-label">College Student</div>
+              <div class="stc-sub">B.Tech / MCA / MBA…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- School fields -->
+        <div id="schoolFields">
+          <div class="field">
+            <label>Class / Grade</label>
+            <div class="iw"><span class="ii">🏫</span>
+              <select id="sClass">
+                <option value="" disabled selected>Select your class</option>
+                <option>Class 6</option><option>Class 7</option><option>Class 8</option>
+                <option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Subjects</label>
+            <div class="chips2" id="subChips">
+              <div class="chip2 on" data-v="Maths">📐 Maths</div>
+              <div class="chip2 on" data-v="Science">🔬 Science</div>
+              <div class="chip2" data-v="English">📖 English</div>
+              <div class="chip2" data-v="Hindi">🗣️ Hindi</div>
+              <div class="chip2 on" data-v="Physics">⚡ Physics</div>
+              <div class="chip2" data-v="Chemistry">🧪 Chemistry</div>
+              <div class="chip2" data-v="Biology">🌿 Biology</div>
+              <div class="chip2" data-v="Computer">💻 Computer</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- College fields -->
+        <div id="collegeFields" style="display:none">
+          <div class="field">
+            <label>Year</label>
+            <div class="iw"><span class="ii">📅</span>
+              <select id="cYear" onchange="updateCollegeSubjects()">
+                <option value="" disabled selected>Select year</option>
+                <option value="1">1st Year</option><option value="2">2nd Year</option>
+                <option value="3">3rd Year</option><option value="4">4th Year</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Branch / Programme</label>
+            <div class="iw"><span class="ii">🏛️</span>
+              <select id="cBranch" onchange="updateCollegeSubjects()">
+                <option value="" disabled selected>Select branch</option>
+                <option value="CSE">B.Tech – Computer Science (CSE)</option>
+                <option value="IT">B.Tech – Information Technology (IT)</option>
+                <option value="ECE">B.Tech – Electronics &amp; Communication (ECE)</option>
+                <option value="ME">B.Tech – Mechanical Engineering (ME)</option>
+                <option value="CE">B.Tech – Civil Engineering (CE)</option>
+                <option value="EE">B.Tech – Electrical Engineering (EE)</option>
+                <option value="MCA">MCA – Master of Computer Applications</option>
+                <option value="MBA">MBA – Master of Business Administration</option>
+                <option value="BCA">BCA – Bachelor of Computer Applications</option>
+                <option value="BSC_CS">B.Sc – Computer Science</option>
+                <option value="BSC_MATH">B.Sc – Mathematics</option>
+                <option value="BSC_PHY">B.Sc – Physics</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" id="cSubjectField" style="display:none">
+            <label>Subjects <span style="color:var(--accent2);font-size:10px;text-transform:none;letter-spacing:0">(MAKAUT Syllabus)</span></label>
+            <div class="chips2" id="cSubChips"></div>
+          </div>
+        </div>
+
+      </div><!-- /student section -->
+
+      <!-- ── PARENT SECTION ── -->
+      <div class="role-section" id="pf">
+        <div class="field">
+          <label>Parent / Guardian Name</label>
+          <div class="iw"><span class="ii">👤</span><input type="text" id="pName" placeholder="Your full name"/></div>
+        </div>
+        <div class="field">
+          <label>Child's Name</label>
+          <div class="iw"><span class="ii">🎒</span><input type="text" id="pChildName" placeholder="Your child's full name"/></div>
+        </div>
+
+        <!-- School / College chooser for Parent -->
+        <div class="field">
+          <label>Child is a</label>
+          <div class="stype-wrap">
+            <div class="stype-card on" id="pStSchool" onclick="setParentChildType('school')">
+              <div class="stc-icon">🏫</div>
+              <div class="stc-label">School Student</div>
+              <div class="stc-sub">Class 6 – 12</div>
+            </div>
+            <div class="stype-card" id="pStCollege" onclick="setParentChildType('college')">
+              <div class="stc-icon">🎓</div>
+              <div class="stc-label">College Student</div>
+              <div class="stc-sub">B.Tech / MCA / MBA…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parent → School child fields -->
+        <div id="pSchoolFields">
+          <div class="field">
+            <label>Child's Class</label>
+            <div class="iw"><span class="ii">🏫</span>
+              <select id="pChildClass">
+                <option value="" disabled selected>Select child's class</option>
+                <option>Class 6</option><option>Class 7</option><option>Class 8</option>
+                <option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parent → College child fields -->
+        <div id="pCollegeFields" style="display:none">
+          <div class="field">
+            <label>Child's Year</label>
+            <div class="iw"><span class="ii">📅</span>
+              <select id="pCYear">
+                <option value="" disabled selected>Select year</option>
+                <option value="1">1st Year</option><option value="2">2nd Year</option>
+                <option value="3">3rd Year</option><option value="4">4th Year</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Child's Branch / Programme</label>
+            <div class="iw"><span class="ii">🏛️</span>
+              <select id="pCBranch">
+                <option value="" disabled selected>Select branch</option>
+                <option>B.Tech – Computer Science (CSE)</option>
+                <option>B.Tech – Information Technology (IT)</option>
+                <option>B.Tech – Electronics &amp; Communication (ECE)</option>
+                <option>B.Tech – Mechanical Engineering (ME)</option>
+                <option>B.Tech – Civil Engineering (CE)</option>
+                <option>B.Tech – Electrical Engineering (EE)</option>
+                <option>MCA – Master of Computer Applications</option>
+                <option>MBA – Master of Business Administration</option>
+                <option>BCA – Bachelor of Computer Applications</option>
+                <option>B.Sc – Computer Science</option>
+                <option>B.Sc – Mathematics</option>
+                <option>B.Sc – Physics</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Parent / Guardian Phone No.</label>
+          <div class="iw"><span class="ii">📱</span><input type="tel" id="pPhone" placeholder="+91 98765 43210"/></div>
+        </div>
+      </div>
+
+      <!-- ── TEACHER SECTION ── -->
+      <div class="role-section" id="tf">
+        <div class="field">
+          <label>Teacher Name</label>
+          <div class="iw"><span class="ii">👩‍🏫</span><input type="text" id="tName" placeholder="Your full name"/></div>
+        </div>
+
+        <!-- School / College chooser for Teacher -->
+        <div class="field">
+          <label>I teach at</label>
+          <div class="stype-wrap">
+            <div class="stype-card on" id="tStSchool" onclick="setTeacherType('school')">
+              <div class="stc-icon">🏫</div>
+              <div class="stc-label">School</div>
+              <div class="stc-sub">Class 6 – 12</div>
+            </div>
+            <div class="stype-card" id="tStCollege" onclick="setTeacherType('college')">
+              <div class="stc-icon">🎓</div>
+              <div class="stc-label">College</div>
+              <div class="stc-sub">B.Tech / MCA / MBA…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teacher → School fields -->
+        <div id="tSchoolFields">
+          <div class="field">
+            <label>Subject You Teach</label>
+            <div class="iw"><span class="ii">📚</span>
+              <select id="tSubject">
+                <option value="" disabled selected>Select subject</option>
+                <option>Maths</option><option>Science</option><option>Physics</option>
+                <option>Chemistry</option><option>Biology</option><option>English</option>
+                <option>Hindi</option><option>Computer</option><option>History</option>
+                <option>Geography</option><option>Social Science</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Class / Section</label>
+            <div class="iw"><span class="ii">🏫</span>
+              <select id="tClass">
+                <option value="" disabled selected>Select class</option>
+                <option>Class 6</option><option>Class 7</option><option>Class 8</option>
+                <option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teacher → College fields -->
+        <div id="tCollegeFields" style="display:none">
+          <div class="field">
+            <label>Subject / Course You Teach</label>
+            <div class="iw"><span class="ii">📚</span>
+              <select id="tCSubject">
+                <option value="" disabled selected>Select subject</option>
+                <optgroup label="── Mathematics ──">
+                  <option>Mathematics I</option><option>Mathematics II</option><option>Discrete Mathematics</option><option>Numerical Methods</option>
+                </optgroup>
+                <optgroup label="── Computer Science ──">
+                  <option>Programming in C</option><option>Data Structures</option><option>Object Oriented Programming (Java)</option>
+                  <option>Algorithms</option><option>Operating Systems</option><option>Database Management System</option>
+                  <option>Computer Networks</option><option>Software Engineering</option><option>Compiler Design</option>
+                  <option>Machine Learning</option><option>Cloud Computing</option><option>Information Security</option>
+                  <option>Web Technologies</option><option>Mobile Application Development</option>
+                </optgroup>
+                <optgroup label="── Electronics ──">
+                  <option>Digital Electronics</option><option>Signals &amp; Systems</option><option>Electronic Devices &amp; Circuits</option>
+                  <option>Microprocessor &amp; Microcontroller</option><option>VLSI Design</option><option>Control Systems</option>
+                  <option>Digital Communication</option><option>Analog Communication</option>
+                </optgroup>
+                <optgroup label="── Mechanical ──">
+                  <option>Thermodynamics</option><option>Fluid Mechanics</option><option>Strength of Materials</option>
+                  <option>Machine Design</option><option>Heat Transfer</option><option>Manufacturing Processes</option>
+                </optgroup>
+                <optgroup label="── Civil ──">
+                  <option>Structural Analysis</option><option>Geotechnical Engineering</option><option>Transportation Engineering</option>
+                  <option>Environmental Engineering</option><option>Concrete Technology</option>
+                </optgroup>
+                <optgroup label="── Physics / Chemistry ──">
+                  <option>Physics</option><option>Chemistry</option><option>Environmental Science</option>
+                </optgroup>
+                <optgroup label="── Management ──">
+                  <option>Principles of Management</option><option>Managerial Economics</option><option>Marketing Management</option>
+                  <option>Financial Management</option><option>Human Resource Management</option>
+                </optgroup>
+                <optgroup label="── Other ──">
+                  <option>English for Communication</option><option>Engineering Graphics</option>
+                  <option>Basic Electrical Engineering</option><option>Workshop Practice</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Branch / Programme</label>
+            <div class="iw"><span class="ii">🏛️</span>
+              <select id="tCBranch">
+                <option value="" disabled selected>Select branch</option>
+                <option>B.Tech – CSE</option><option>B.Tech – IT</option><option>B.Tech – ECE</option>
+                <option>B.Tech – ME</option><option>B.Tech – CE</option><option>B.Tech – EE</option>
+                <option>MCA</option><option>MBA</option><option>BCA</option>
+                <option>B.Sc – CS</option><option>B.Sc – Maths</option><option>B.Sc – Physics</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Year / Semester</label>
+            <div class="iw"><span class="ii">📅</span>
+              <select id="tCYear">
+                <option value="" disabled selected>Select year</option>
+                <option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Common fields (always visible) -->
+      <div class="field">
+        <label>Email Address</label>
+        <div class="iw"><span class="ii">✉️</span><input type="email" id="lEmail" placeholder="you@example.com"/></div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="iw">
+          <span class="ii">🔒</span>
+          <input type="password" id="lPw" placeholder="Enter your password"/>
+          <button class="pw-eye" type="button" onclick="tpw()">👁️</button>
+        </div>
+      </div>
+      <div class="rowbet">
+        <label class="rem"><input type="checkbox"/> Remember me</label>
+        <a href="#" class="fgot">Forgot password?</a>
+      </div>
+
+      <button class="btn" type="button" onclick="doLogin()">Sign In →</button>
+      <div class="divider">or</div>
+      <div class="reg-link">New student? <a href="#">Register here →</a></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ APP SCREEN ══════════ -->
+<div class="screen" id="appScreen">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-icon">🎓</div><div class="sb-logo-name">EdTech <em>AI</em></div></div>
+
+    <!-- Student nav -->
+    <div id="nav-student" style="display:none">
+      <div class="sb-section">Main</div>
+      <div class="sb-item on" onclick="nav('dashboard',this)"><span class="si">🏠</span><span class="sl">Dashboard</span></div>
+      <div class="sb-section">Learning</div>
+      <div class="sb-item" onclick="nav('notes',this)"><span class="si">📝</span><span class="sl">My Notes</span></div>
+      <div class="sb-item" onclick="nav('ai',this)"><span class="si">🤖</span><span class="sl">AI Tutor</span></div>
+      <div class="sb-item" onclick="nav('tests',this)"><span class="si">📋</span><span class="sl">Test Papers</span></div>
+      <div class="sb-section">Reports</div>
+      <div class="sb-item" onclick="nav('results',this)"><span class="si">🏆</span><span class="sl">Results</span></div>
+      <div class="sb-item" onclick="nav('attendance',this)"><span class="si">📅</span><span class="sl">Attendance</span></div>
     </div>
 
-    <div class="main-content">
-
-        <div id="profile" class="section active">
-            <h2>Student Profile</h2>
-            <div id="profileEdit" class="card">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div><label>Student Name</label><input type="text" id="pName" placeholder="Full Name"></div>
-                    <div><label>Class</label><input type="text" id="pClass" placeholder="e.g. 10th"></div>
-                    <div><label>Student Mobile</label><input type="tel" id="pStuMob" placeholder="Student Phone"></div>
-                    <div><label>Parent Mobile</label><input type="tel" id="pParMob" placeholder="Parent Phone"></div>
-                </div>
-                <label>Select Your Subjects (Hold Ctrl to select multiple)</label>
-                <select id="pSubjects" multiple style="height: 120px;">
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Physics">Physics</option>
-                    <option value="Chemistry">Chemistry</option>
-                    <option value="English">English</option>
-                    <option value="Computer Science">Computer Science</option>
-                    <option value="C Programming">C Programming</option>
-                </select>
-                <button class="btn" onclick="saveProfile()">Save Profile</button>
-            </div>
-            
-            <div id="profileView" class="card" style="display:none; text-align:center;">
-                <h3><i class="fas fa-user-check"></i> <span id="dName">Name</span></h3>
-                <p style="margin: 10px 0;">Enrolled Subjects: <b id="dSubjects">-</b></p>
-                <button class="btn" onclick="editProfile()" style="background:#64748b;">Update Profile</button>
-            </div>
-        </div>
-
-        <div id="gemini" class="section">
-            <h2><i class="fas fa-robot"></i> Ask Google Gemini</h2>
-            <div class="card">
-                <div class="chat-container">
-                    <div class="chat-box" id="chatHistory">
-                        <div class="msg bot-msg">Hello! I am your AI Tutor. Ask me anything about your subjects!</div>
-                    </div>
-                    <div style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px;">
-                        <input type="text" id="geminiInput" placeholder="Type your doubt here..." style="margin-bottom:0;" onkeypress="if(event.key==='Enter') callGeminiAPI()">
-                        <button class="btn" onclick="callGeminiAPI()">Send <i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="tests" class="section">
-            <h2>Test Center</h2>
-            <div class="card">
-                <p>Select a subject to start your practice test.</p>
-                <select id="testSubjectSelector" onchange="loadTestLink()">
-                    <option value="">-- Select Subject --</option>
-                </select>
-                <div id="testArea" style="display:none; margin-top: 20px; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
-                    <h3>Exam Portal Ready</h3>
-                    <p style="color: #64748b; margin-bottom: 15px;">Complete the form and click mark as completed to update your progress.</p>
-                    <div style="display:flex; gap:10px;">
-                        <a id="testLink" href="#" target="_blank" class="btn">Open Google Form</a>
-                        <button class="btn" style="background:#10b981;" onclick="markTestComplete()">Mark as Completed</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="notes" class="section">
-            <h2><i class="fas fa-sticky-note"></i> My Smart Notes</h2>
-            <div class="card">
-                <label>Select Subject to Load/Save Notes</label>
-                <select id="noteSubjectSelector" onchange="loadSubjectNote()" style="margin-bottom: 20px; font-weight: bold;">
-                    <option value="">-- Select Subject --</option>
-                </select>
-
-                <div class="notes-grid">
-                    <div>
-                        <h4>Editor (Markdown + LaTeX)</h4>
-                        <textarea id="noteArea" style="height: 400px;" placeholder="Use **bold** for headers or $x^2$ for math equations..." oninput="renderLivePreview()"></textarea>
-                        <button class="btn" onclick="saveSubjectNote()"><i class="fas fa-save"></i> Save Subject Note</button>
-                    </div>
-                    <div>
-                        <h4>Live Preview</h4>
-                        <div id="notesDisplay">
-                            <i style="color: grey;">Select a subject and start typing to see the preview...</i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="progress" class="section">
-            <h2>Progress Monitor</h2>
-            <div id="progressLocked" class="locked-overlay">
-                <i class="fas fa-lock" style="font-size:3rem; color:#cbd5e1;"></i>
-                <h3 style="margin-top:10px;">No Data Available</h3>
-                <p>Complete a test to unlock your performance report.</p>
-            </div>
-            <div id="progressUnlocked" class="card" style="display:none;">
-                <h3 style="color:#10b981;"><i class="fas fa-check-circle"></i> Curriculum Progress: 100%</h3>
-                <p style="margin: 15px 0;">Your test submission has been recorded.</p>
-                <button class="btn" style="background:#25D366;" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Notify Parent</button>
-            </div>
-        </div>
-
+    <!-- Parent nav -->
+    <div id="nav-parent" style="display:none">
+      <div class="sb-section">Overview</div>
+      <div class="sb-item on" onclick="nav('parent-dashboard',this)"><span class="si">🏠</span><span class="sl">Dashboard</span></div>
+      <div class="sb-section">Child's Report</div>
+      <div class="sb-item" onclick="nav('parent-results',this)"><span class="si">🏆</span><span class="sl">Test Results</span></div>
+      <div class="sb-item" onclick="nav('parent-attendance',this)"><span class="si">📅</span><span class="sl">Attendance</span></div>
+      <div class="sb-item" onclick="nav('parent-notes',this)"><span class="si">📝</span><span class="sl">Notes Written</span></div>
     </div>
 
-    <script>
-        const API_KEY = "AIzaSyB1HNNdMX7UsVpcaNhvktdOXH3GfOVq35s"; // Your Key
+    <!-- Teacher nav -->
+    <div id="nav-teacher" style="display:none">
+      <div class="sb-section">Overview</div>
+      <div class="sb-item on" onclick="nav('teacher-dashboard',this)"><span class="si">🏠</span><span class="sl">Dashboard</span></div>
+      <div class="sb-section">Classroom</div>
+      <div class="sb-item" onclick="nav('teacher-results',this)"><span class="si">🏆</span><span class="sl">Student Results</span></div>
+      <div class="sb-item" onclick="nav('teacher-attendance',this)"><span class="si">📅</span><span class="sl">Attendance</span></div>
+      <div class="sb-item" onclick="nav('teacher-ai',this)"><span class="si">🤖</span><span class="sl">AI Tutor</span></div>
+    </div>
 
-        // Navigation
-        function showSection(id, el) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
-        }
+    <div class="sb-user">
+      <div class="sb-user-info">
+        <div class="sb-avatar" id="sbAvatar">👤</div>
+        <div><div class="sb-uname" id="sbName">User</div><div class="sb-urole" id="sbClass">—</div></div>
+      </div>
+      <div class="sb-logout" onclick="logout()">🚪 <span>Logout</span></div>
+    </div>
+  </div>
 
-        // --- PROFILE & INITIALIZATION ---
-        function saveProfile() {
-            let selectedOpts = Array.from(document.getElementById('pSubjects').selectedOptions).map(opt => opt.value);
-            const data = {
-                name: document.getElementById('pName').value,
-                stuMob: document.getElementById('pStuMob').value,
-                parMob: document.getElementById('pParMob').value,
-                subjects: selectedOpts
-            };
-            if(!data.name || selectedOpts.length === 0) { alert("Please enter name and select subjects"); return; }
-            localStorage.setItem('studentProfile', JSON.stringify(data));
-            loadProfile();
-        }
+  <!-- MAIN CONTENT -->
+  <div class="main">
 
-        function loadProfile() {
-            const data = JSON.parse(localStorage.getItem('studentProfile'));
-            if(data) {
-                document.getElementById('profileEdit').style.display = 'none';
-                document.getElementById('profileView').style.display = 'block';
-                document.getElementById('dName').innerText = data.name;
-                document.getElementById('dSubjects').innerText = data.subjects.join(', ');
-                
-                // Sync dropdowns
-                updateDropdowns(data.subjects);
-            }
-        }
+    <!-- ── DASHBOARD ── -->
+    <div id="pg-dashboard" class="anim">
+      <div class="welcome-banner wb-morning" id="welcomeBanner">
+        <div class="wb-text">
+          <h2 id="dashGreet">Good Morning! 👋</h2>
+          <p id="dashSub">Ready to learn something new today?</p>
+        </div>
+        <div class="wb-right">
+          <div class="live-clock" id="liveClock">--:--:--</div>
+          <div class="live-date" id="liveDate">--</div>
+          <div class="live-period period-morning" id="livePeriod">Morning</div>
+          <div class="wb-icon" id="wbIcon">🌅</div>
+        </div>
+      </div>
+      <div class="g4 mb16">
+        <div class="stat-card ac"><div class="sc-icon">📝</div><div class="sc-val" id="d-notes">0</div><div class="sc-lab">Notes Saved</div></div>
+        <div class="stat-card a2"><div class="sc-icon">✅</div><div class="sc-val" id="d-tests">0</div><div class="sc-lab">Tests Taken</div></div>
+        <div class="stat-card a3"><div class="sc-icon">📊</div><div class="sc-val" id="d-avg">—</div><div class="sc-lab">Avg. Score</div></div>
+        <div class="stat-card aw"><div class="sc-icon">📅</div><div class="sc-val" id="d-att">—</div><div class="sc-lab">Days Present</div></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-title">📚 Quick Notes</div>
+          <div id="dashNotes" style="font-size:13px;color:var(--muted)">No notes yet. <a href="#" onclick="nav('notes',null)" style="color:var(--accent)">Add your first note →</a></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🔔 Recent Activity</div>
+          <div id="dashActivity"></div>
+        </div>
+      </div>
+    </div>
 
-        function editProfile() {
-            document.getElementById('profileEdit').style.display = 'block';
-            document.getElementById('profileView').style.display = 'none';
-        }
+    <!-- ── NOTES ── -->
+    <div id="pg-notes" class="hidden anim">
+      <div class="page-title">📝 My Notes</div>
+      <div class="page-sub">Save notes for each subject — accessible anytime, forever.</div>
 
-        function updateDropdowns(subjects) {
-            const dropdowns = [document.getElementById('testSubjectSelector'), document.getElementById('noteSubjectSelector')];
-            dropdowns.forEach(sel => {
-                sel.innerHTML = '<option value="">-- Select Subject --</option>';
-                subjects.forEach(sub => {
-                    let opt = document.createElement('option');
-                    opt.value = sub; opt.innerText = sub;
-                    sel.appendChild(opt);
-                });
-            });
-        }
+      <div class="note-editor card">
+        <div class="card-title">✏️ New Note</div>
+        <div class="ne-top">
+          <div class="iw flex-1"><span class="ii">📌</span><input type="text" id="noteTitle" placeholder="Note title…"/></div>
+          <div class="iw" style="width:160px"><span class="ii">📚</span><select id="noteSubject"><option value="" disabled selected>Subject</option></select></div>
+        </div>
+        <div class="iw"><span class="ii" style="top:18px;transform:none">📄</span><textarea class="note-body" id="noteBody" placeholder="Write your notes here… explain concepts, paste formulas, add reminders." style="padding-left:40px"></textarea></div>
+        <div style="margin-top:14px;display:flex;gap:10px">
+          <button class="btn sm" onclick="saveNote()">💾 Save Note</button>
+          <button class="btn sm secondary" onclick="clearNoteForm()">✕ Clear</button>
+        </div>
+      </div>
 
-        // --- SMART NOTES LOGIC ---
-        function loadSubjectNote() {
-            const subject = document.getElementById('noteSubjectSelector').value;
-            const textArea = document.getElementById('noteArea');
-            if (!subject) { textArea.value = ""; renderLivePreview(); return; }
+      <div class="subject-pills" id="notePills"></div>
+      <div class="notes-grid" id="notesGrid"></div>
+    </div>
 
-            const allNotes = JSON.parse(localStorage.getItem('subjectNotes')) || {};
-            textArea.value = allNotes[subject] || ""; 
-            renderLivePreview();
-        }
+    <!-- ── AI TUTOR ── -->
+    <div id="pg-ai" class="hidden anim">
+      <div class="page-title">🤖 AI Tutor</div>
+      <div class="page-sub">Ask any doubt — get instant, step-by-step explanations powered by AI.</div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">💡 Suggested Questions</div>
+        <div class="ai-suggestions">
+          <div class="ai-sug" data-q="What is Newton's 3rd law?" onclick="askSuggested(this)">⚡ Newton's 3rd Law</div>
+          <div class="ai-sug" data-q="How to solve quadratic equations?" onclick="askSuggested(this)">📐 Quadratic Equations</div>
+          <div class="ai-sug" data-q="Explain photosynthesis" onclick="askSuggested(this)">🌿 Photosynthesis</div>
+          <div class="ai-sug" data-q="What is the difference between speed and velocity?" onclick="askSuggested(this)">🏃 Speed vs Velocity</div>
+          <div class="ai-sug" data-q="Explain the French Revolution" onclick="askSuggested(this)">🏛️ French Revolution</div>
+          <div class="ai-sug" data-q="What is machine learning?" onclick="askSuggested(this)">🤖 Machine Learning</div>
+          <div class="ai-sug" data-q="How do vaccines work?" onclick="askSuggested(this)">💉 How Vaccines Work</div>
+          <div class="ai-sug" data-q="Explain DNA replication" onclick="askSuggested(this)">🧬 DNA Replication</div>
+          <div class="ai-sug" data-q="Explain Ohm's law" onclick="askSuggested(this)">🔌 Ohm's Law</div>
+          <div class="ai-sug" data-q="What is the Pythagorean theorem?" onclick="askSuggested(this)">📐 Pythagorean Theorem</div>
+          <div class="ai-sug" data-q="Explain the water cycle" onclick="askSuggested(this)">💧 Water Cycle</div>
+          <div class="ai-sug" data-q="Explain acid base and pH" onclick="askSuggested(this)">⚗️ Acids & Bases</div>
+          <div class="ai-sug" data-q="What is trigonometry sin cos tan?" onclick="askSuggested(this)">📐 Trigonometry</div>
+          <div class="ai-sug" data-q="Explain mitosis and meiosis" onclick="askSuggested(this)">🔬 Mitosis vs Meiosis</div>
+          <div class="ai-sug" data-q="Explain the periodic table and atom structure" onclick="askSuggested(this)">⚗️ Periodic Table</div>
+          <div class="ai-sug" data-q="Explain gravity and gravitational force" onclick="askSuggested(this)">🌍 Gravity</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">💬 Ask Your Doubt</div>
+        <div class="ai-chat" id="aiChat">
+          <div class="ai-msg bot">
+            <div class="ai-avatar bot">🤖</div>
+            <div class="ai-bubble">Hello! I'm your EdTech AI Tutor 👋<br>Ask me anything — Maths, Science, History, or any subject you need help with. I'll explain step by step!</div>
+          </div>
+        </div>
+        <div class="ai-search-bar">
+          <div class="iw flex-1"><span class="ii">💬</span><input type="text" id="aiInput" placeholder="Ask any doubt… e.g. 'Explain photosynthesis' or 'What is Ohm's law?'" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendAI();}"/></div>
+          <button class="btn sm" onclick="sendAI()">Ask AI 🚀</button>
+        </div>
+      </div>
+    </div>
 
-        function saveSubjectNote() {
-            const subject = document.getElementById('noteSubjectSelector').value;
-            const text = document.getElementById('noteArea').value;
-            if (!subject) { alert("Select a subject first!"); return; }
+    <!-- ── TESTS ── -->
+    <div id="pg-tests" class="hidden anim">
+      <div class="page-title">📋 Test Papers</div>
+      <div class="page-sub">Take subject-wise mock tests and track your performance.</div>
 
-            const allNotes = JSON.parse(localStorage.getItem('subjectNotes')) || {};
-            allNotes[subject] = text;
-            localStorage.setItem('subjectNotes', JSON.stringify(allNotes));
-            alert(`Notes for ${subject} saved!`);
-        }
+      <div id="testListView">
+        <div class="test-list" id="testList"></div>
+      </div>
 
-        function renderLivePreview() {
-            const raw = document.getElementById('noteArea').value;
-            const display = document.getElementById('notesDisplay');
-            if (!raw.trim()) { display.innerHTML = "<i>Type something...</i>"; return; }
-            
-            display.innerHTML = marked.parse(raw);
-            if (window.MathJax) MathJax.typesetPromise([display]);
-        }
+      <div id="examView" class="hidden">
+        <div class="exam-header">
+          <div>
+            <div style="font-family:var(--fh);font-size:18px;font-weight:800" id="examTitle">Test</div>
+            <div style="font-size:12px;color:var(--muted)" id="examMeta">10 Questions · 20 Minutes</div>
+          </div>
+          <div class="exam-timer" id="examTimer">20:00</div>
+          <button class="btn sm danger" onclick="submitExam()">Submit Test</button>
+        </div>
+        <div id="questionsContainer"></div>
+        <div style="margin-top:16px;display:flex;gap:10px;justify-content:flex-end">
+          <button class="btn sm secondary" onclick="cancelExam()">← Back to Tests</button>
+          <button class="btn sm success" onclick="submitExam()">Submit & See Results →</button>
+        </div>
+      </div>
+    </div>
 
-        // --- GEMINI AI API ---
-        async function callGeminiAPI() {
-            const input = document.getElementById('geminiInput');
-            const history = document.getElementById('chatHistory');
-            const query = input.value.trim();
-            if (!query) return;
+    <!-- ── RESULTS ── -->
+    <div id="pg-results" class="hidden anim">
+      <div class="page-title">🏆 Results</div>
+      <div class="page-sub">Your test scores, grades, and parent-shared reports.</div>
+      <div id="resultContent"></div>
+    </div>
 
-            history.innerHTML += `<div class="msg user-msg">${query}</div>`;
-            input.value = "";
-            
-            const loading = document.createElement('div');
-            loading.className = "msg bot-msg";
-            loading.innerText = "Gemini is typing...";
-            history.appendChild(loading);
-            history.scrollTop = history.scrollHeight;
+    <!-- ── ATTENDANCE ── -->
+    <div id="pg-attendance" class="hidden anim">
+      <div class="page-title">📅 Attendance</div>
+      <div class="page-sub">Subject-wise attendance record for this month.</div>
+      <div class="att-legend">
+        <span class="l-p">Present</span>
+        <span class="l-a">Absent</span>
+        <span class="l-h">Holiday</span>
+      </div>
+      <div id="attContainer"></div>
+    </div>
 
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: query }] }] })
-                });
-                const data = await response.json();
-                loading.remove();
-                
-                const reply = data.candidates[0].content.parts[0].text;
-                history.innerHTML += `<div class="msg bot-msg">${marked.parse(reply)}</div>`;
-                if (window.MathJax) MathJax.typesetPromise();
-            } catch (e) {
-                loading.innerText = "Error connecting to AI. Check API Key.";
-            }
-            history.scrollTop = history.scrollHeight;
-        }
+    <!-- ══════════ PARENT PAGES ══════════ -->
+    <!-- Parent Dashboard -->
+    <div id="pg-parent-dashboard" class="hidden anim">
+      <div class="welcome-banner wb-afternoon" id="parentBanner">
+        <div class="wb-text">
+          <h2 id="parentGreet">Welcome, Parent! 👨‍👩‍👧</h2>
+          <p id="parentSub">Monitor your child's learning progress</p>
+        </div>
+        <div class="wb-right">
+          <div class="live-clock" id="pLiveClock">--:--:--</div>
+          <div class="live-date" id="pLiveDate">--</div>
+          <div class="live-period period-afternoon" id="pLivePeriod">—</div>
+          <div class="wb-icon">👨‍👩‍👧</div>
+        </div>
+      </div>
+      <!-- Same 4 stat cards as student -->
+      <div class="g4 mb16">
+        <div class="stat-card ac"><div class="sc-icon">📝</div><div class="sc-val" id="pd-notes">0</div><div class="sc-lab">Notes Written</div></div>
+        <div class="stat-card a2"><div class="sc-icon">✅</div><div class="sc-val" id="pd-tests">0</div><div class="sc-lab">Tests Taken</div></div>
+        <div class="stat-card a3"><div class="sc-icon">📊</div><div class="sc-val" id="pd-avg">—</div><div class="sc-lab">Avg. Score</div></div>
+        <div class="stat-card aw"><div class="sc-icon">📅</div><div class="sc-val" id="pd-att">—</div><div class="sc-lab">Days Present</div></div>
+      </div>
+      <!-- Same 2-column cards as student -->
+      <div class="g2">
+        <div class="card">
+          <div class="card-title">👶 Child Profile</div>
+          <div id="parentChildProfile"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🔔 Recent Activity</div>
+          <div id="parentActivity"></div>
+        </div>
+      </div>
+    </div>
 
-        // --- TEST & PROGRESS ---
-        function loadTestLink() {
-            if(document.getElementById('testSubjectSelector').value) 
-                document.getElementById('testArea').style.display = 'block';
-        }
+    <!-- Parent Results -->
+    <div id="pg-parent-results" class="hidden anim">
+      <div class="page-title">🏆 Child's Test Results</div>
+      <div class="page-sub">See all test scores and grades for your child.</div>
+      <div id="parentResultContent"></div>
+    </div>
 
-        function markTestComplete() {
-            localStorage.setItem('testStatus', 'completed');
-            checkProgress();
-            alert("Progress Updated!");
-        }
+    <!-- Parent Attendance -->
+    <div id="pg-parent-attendance" class="hidden anim">
+      <div class="page-title">📅 Child's Attendance</div>
+      <div class="page-sub">Day-wise attendance record for each subject.</div>
+      <div id="parentAttContent"></div>
+    </div>
 
-        function checkProgress() {
-            if(localStorage.getItem('testStatus') === 'completed') {
-                document.getElementById('progressLocked').style.display = 'none';
-                document.getElementById('progressUnlocked').style.display = 'block';
-            }
-        }
+    <!-- Parent Notes -->
+    <div id="pg-parent-notes" class="hidden anim">
+      <div class="page-title">📝 Notes Written by Child</div>
+      <div class="page-sub">All study notes your child has saved.</div>
+      <div id="parentNotesContent"></div>
+    </div>
 
-        function sendWhatsApp() {
-            const data = JSON.parse(localStorage.getItem('studentProfile'));
-            window.open(`https://wa.me/${data.parMob}?text=Hi, ${data.name} has completed their test on EdTech AI.`, '_blank');
-        }
+    <!-- ══════════ TEACHER PAGES ══════════ -->
+    <!-- Teacher Dashboard -->
+    <div id="pg-teacher-dashboard" class="hidden anim">
+      <div class="welcome-banner wb-evening">
+        <div class="wb-text">
+          <h2 id="teacherGreet">Welcome, Teacher! 👩‍🏫</h2>
+          <p id="teacherSub">Manage your classroom and track student progress</p>
+        </div>
+        <div class="wb-right">
+          <div class="live-clock" id="tLiveClock">--:--:--</div>
+          <div class="live-date" id="tLiveDate">--</div>
+          <div class="live-period period-evening" id="tLivePeriod">—</div>
+          <div class="wb-icon">👩‍🏫</div>
+        </div>
+      </div>
+      <!-- Same 4 stat cards as student -->
+      <div class="g4 mb16">
+        <div class="stat-card ac"><div class="sc-icon">🎓</div><div class="sc-val" id="td-subject">—</div><div class="sc-lab">Subject</div></div>
+        <div class="stat-card a2"><div class="sc-icon">🏫</div><div class="sc-val" id="td-class">—</div><div class="sc-lab">Class</div></div>
+        <div class="stat-card a3"><div class="sc-icon">📋</div><div class="sc-val" id="td-tests">0</div><div class="sc-lab">Tests Tracked</div></div>
+        <div class="stat-card aw"><div class="sc-icon">📅</div><div class="sc-val" id="td-att">—</div><div class="sc-lab">Days Tracked</div></div>
+      </div>
+      <!-- Same 2-column cards as student -->
+      <div class="g2">
+        <div class="card">
+          <div class="card-title">👩‍🏫 Teacher Profile</div>
+          <div id="teacherProfile"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🔔 Quick Actions</div>
+          <div id="teacherQuickActions"></div>
+        </div>
+      </div>
+    </div>
 
-        window.onload = function() {
-            loadProfile();
-            checkProgress();
-        };
-    </script>
+    <!-- Teacher Results -->
+    <div id="pg-teacher-results" class="hidden anim">
+      <div class="page-title">🏆 Student Test Results</div>
+      <div class="page-sub">View and analyse test scores for your subject.</div>
+      <div id="teacherResultContent"></div>
+    </div>
+
+    <!-- Teacher Attendance -->
+    <div id="pg-teacher-attendance" class="hidden anim">
+      <div class="page-title">📅 Class Attendance</div>
+      <div class="page-sub">Attendance overview for your class.</div>
+      <div id="teacherAttContent"></div>
+    </div>
+
+    <!-- Teacher AI Tutor -->
+    <div id="pg-teacher-ai" class="hidden anim">
+      <div class="page-title">🤖 AI Teaching Assistant</div>
+      <div class="page-sub">Get lesson plans, explanations, and teaching ideas.</div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">💡 Teaching Suggestions</div>
+        <div class="ai-suggestions">
+          <div class="ai-sug" data-q="Give me a lesson plan for Newton's laws" onclick="askSuggested(this)">📋 Newton's Laws Plan</div>
+          <div class="ai-sug" data-q="How to explain photosynthesis to students?" onclick="askSuggested(this)">🌿 Teach Photosynthesis</div>
+          <div class="ai-sug" data-q="Create quiz questions for Ohm's law" onclick="askSuggested(this)">⚡ Quiz: Ohm's Law</div>
+          <div class="ai-sug" data-q="Explain quadratic equations step by step for class 10" onclick="askSuggested(this)">📐 Quadratic Equations</div>
+          <div class="ai-sug" data-q="What are common student mistakes in algebra?" onclick="askSuggested(this)">⚠️ Common Mistakes</div>
+          <div class="ai-sug" data-q="How to make science interesting for students?" onclick="askSuggested(this)">🔬 Engaging Science</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">💬 Ask Teaching Assistant</div>
+        <div class="ai-chat" id="teacherAiChat">
+          <div class="ai-msg bot">
+            <div class="ai-avatar bot">🤖</div>
+            <div class="ai-bubble">Hello Teacher! 👩‍🏫<br>I'm your AI Teaching Assistant. Ask me anything about lesson planning, student doubts, concept explanations, or quiz creation!</div>
+          </div>
+        </div>
+        <div class="ai-search-bar">
+          <div class="iw flex-1"><span class="ii">💬</span><input type="text" id="teacherAiInput" placeholder="Ask for lesson ideas, explanations, quiz questions…" onkeydown="if(event.key==='Enter')sendTeacherAI()"/></div>
+          <button class="btn sm" onclick="sendTeacherAI()">Ask AI 🚀</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /appScreen -->
+
+<script>
+// ══ STATE ══
+let state = {
+  role:'student', studentName:'', studentClass:'', studentType:'school',
+  collegeBranch:'', collegeYear:'',
+  subjects:['Maths','Science','Physics'],
+  notes:[], results:[], attendance:{}, selectedSubsForNotes:'All',
+  examActive:false, examTimer:null, examTimeLeft:1200, examAnswers:{}, currentExam:null
+};
+
+const SUBJECTS = ['Maths','Science','English','Hindi','Physics','Chemistry','Biology','Computer'];
+
+// subject colours
+const SCOL = {
+  Maths:'#3b9eff',Science:'#00e5c3',English:'#a855f7',Hindi:'#f59e0b',
+  Physics:'#ec4899',Chemistry:'#22c55e',Biology:'#06b6d4',Computer:'#f97316',History:'#8b5cf6'
+};
+
+// ══ AI responses DB ══
+const AI_DB = [
+  {q:["newton","3rd","third","law of motion"],a:`<b>Newton's Third Law of Motion</b><br><br>📌 <i>Statement:</i> For every action, there is an equal and opposite reaction.<br><br>🔬 <b>Examples:</b><br>• A rocket expels gas downward → rocket moves upward<br>• You push a wall → the wall pushes you back<br>• A gun fires a bullet → gun recoils backward<br><br>🧮 <b>Mathematically:</b> F_AB = −F_BA<br><br>Both forces are equal in magnitude but opposite in direction. They act on different bodies!`},
+  {q:["quadratic","equation","solve"],a:`<b>Solving Quadratic Equations</b><br><br>A quadratic equation has the form: <b>ax² + bx + c = 0</b><br><br>📐 <b>Method 1 — Quadratic Formula:</b><br>x = (−b ± √(b²−4ac)) / 2a<br><br>📐 <b>Method 2 — Factoring:</b><br>x² + 5x + 6 = 0 → (x+2)(x+3) = 0 → x = −2 or x = −3<br><br>📐 <b>Method 3 — Completing the Square</b><br><br>🔑 Discriminant (b²−4ac):<br>• > 0 → two real roots<br>• = 0 → one real root<br>• < 0 → no real roots`},
+  {q:["photosynthesis"],a:`<b>Photosynthesis 🌿</b><br><br>📌 Process by which green plants make food using sunlight.<br><br>🧮 <b>Chemical Equation:</b><br>6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂<br><br>🔬 <b>Steps:</b><br>1. Light Reaction (in Thylakoid) — captures light energy, splits water<br>2. Dark Reaction / Calvin Cycle (in Stroma) — CO₂ fixed into glucose<br><br>🌞 <b>Requirements:</b> Sunlight, Water, CO₂, Chlorophyll<br>🍃 <b>Products:</b> Glucose (food) + Oxygen (released)`},
+  {q:["speed","velocity","difference"],a:`<b>Speed vs Velocity</b><br><br>| | Speed | Velocity |<br>|---|---|---|<br>|Type|Scalar|Vector|<br>|Direction|No|Yes|<br>|Formula|d/t|displacement/t|<br><br>🔍 <b>Key Difference:</b><br>• Speed = how fast an object moves (e.g., 60 km/h)<br>• Velocity = speed + direction (e.g., 60 km/h North)<br><br>📌 A car going in a circle at constant speed has changing velocity (direction changes)!`},
+  {q:["french revolution"],a:`<b>French Revolution (1789–1799) 🏛️</b><br><br>📌 <b>Causes:</b><br>• Financial crisis & heavy taxes<br>• Inequality between estates (clergy, nobility, commoners)<br>• Enlightenment ideas of liberty & equality<br>• Food shortages & famine<br><br>📅 <b>Key Events:</b><br>• 1789 — Storming of the Bastille<br>• 1792 — Monarchy abolished<br>• 1793-94 — Reign of Terror (Robespierre)<br>• 1799 — Napoleon takes power<br><br>💡 <b>Impact:</b> Spread democracy, nationalism, and human rights across Europe.`},
+  {q:["machine learning","ml","ai","artificial intelligence"],a:`<b>Machine Learning 🤖</b><br><br>📌 A type of AI where computers <i>learn from data</i> without being explicitly programmed.<br><br>🔬 <b>Types:</b><br>1. <b>Supervised Learning</b> — learns from labelled data (e.g., spam detection)<br>2. <b>Unsupervised Learning</b> — finds patterns in unlabelled data (e.g., clustering)<br>3. <b>Reinforcement Learning</b> — learns by trial & reward (e.g., game-playing AI)<br><br>🛠️ <b>Real Examples:</b> Netflix recommendations, voice assistants, self-driving cars<br><br>🧮 Core algorithm: finds a function f(x) = y that best maps inputs to outputs.`},
+  {q:["vaccine","vaccines","work"],a:`<b>How Vaccines Work 💉</b><br><br>📌 Vaccines train your immune system to fight a disease without actually getting sick.<br><br>🔬 <b>Process:</b><br>1. Vaccine introduces a harmless part of pathogen (antigen)<br>2. Immune system produces antibodies<br>3. Memory cells are created<br>4. Future infection → immune system recognises & destroys pathogen quickly!<br><br>🧬 <b>Types:</b><br>• Live attenuated (weakened virus)<br>• mRNA vaccines (COVID-19)<br>• Subunit vaccines (Hepatitis B)<br>• Inactivated vaccines (Flu)`},
+  {q:["dna","replication"],a:`<b>DNA Replication 🧬</b><br><br>📌 Process of copying DNA before cell division.<br><br>📐 <b>Steps:</b><br>1. <b>Initiation</b> — Helicase unwinds the double helix at origin<br>2. <b>Elongation</b> — DNA Polymerase adds complementary nucleotides (5'→3')<br>3. <b>Termination</b> — Strands are complete; two identical DNA molecules formed<br><br>🔑 <b>Key Enzymes:</b><br>• Helicase — unwinds DNA<br>• DNA Polymerase — adds new nucleotides<br>• Ligase — joins Okazaki fragments<br><br>📌 Rule: A-T, G-C pairing (Chargaff's rule)`},
+  {q:["ohm","law","resistance"],a:`<b>Ohm's Law ⚡</b><br><br>📌 <i>Statement:</i> At constant temperature, current through a conductor is proportional to voltage.<br><br>🧮 <b>Formula:</b> <b>V = I × R</b><br>• V = Voltage (Volts)<br>• I = Current (Amperes)<br>• R = Resistance (Ohms Ω)<br><br>📊 <b>Triangle Trick:</b><br>Cover the unknown: V = IR | I = V/R | R = V/I<br><br>🔌 <b>Example:</b> If V = 12V and R = 4Ω, then I = 12/4 = 3A`},
+  {q:["mitosis","meiosis","cell division"],a:`<b>Cell Division: Mitosis vs Meiosis</b><br><br>| | Mitosis | Meiosis |<br>|---|---|---|<br>|Divisions|1|2|<br>|Cells produced|2|4|<br>|Chromosome no.|Same (2n)|Half (n)|<br>|Purpose|Growth & repair|Sexual reproduction|<br><br>🔬 <b>Phases of Mitosis:</b> Prophase → Metaphase → Anaphase → Telophase → Cytokinesis<br><br>💡 Memory trick: PMAT — Please Meet A Teacher!`},
+];
+
+// ══ TEST DATA ══
+const TEST_BANK = {
+  Maths:[
+    {q:"What is the value of π (pi)?",opts:["3.14","3.16","3.12","3.18"],ans:0},
+    {q:"Solve: 2x + 6 = 14. What is x?",opts:["4","3","5","6"],ans:0},
+    {q:"What is the area of a circle with radius 7 cm?",opts:["154 cm²","144 cm²","164 cm²","174 cm²"],ans:0},
+    {q:"Which is a prime number?",opts:["17","21","25","27"],ans:0},
+    {q:"What is √144?",opts:["12","14","11","13"],ans:0},
+    {q:"What is 15% of 200?",opts:["30","25","35","20"],ans:0},
+    {q:"Simplify: (3²)³",opts:["729","81","243","512"],ans:0},
+    {q:"The sum of angles in a triangle is?",opts:["180°","360°","270°","90°"],ans:0},
+    {q:"What is the LCM of 4 and 6?",opts:["12","24","8","6"],ans:0},
+    {q:"What is 7³?",opts:["343","294","441","392"],ans:0},
+  ],
+  Science:[
+    {q:"The chemical symbol for water is?",opts:["H₂O","HO₂","H₂O₂","HO"],ans:0},
+    {q:"Which planet is the largest?",opts:["Jupiter","Saturn","Neptune","Uranus"],ans:0},
+    {q:"What is the unit of electric current?",opts:["Ampere","Volt","Ohm","Watt"],ans:0},
+    {q:"The process of making food by plants is?",opts:["Photosynthesis","Respiration","Digestion","Osmosis"],ans:0},
+    {q:"Which gas is released during photosynthesis?",opts:["Oxygen","Carbon Dioxide","Nitrogen","Hydrogen"],ans:0},
+    {q:"Speed of light is approximately?",opts:["3×10⁸ m/s","3×10⁶ m/s","3×10¹⁰ m/s","3×10⁴ m/s"],ans:0},
+    {q:"DNA stands for?",opts:["Deoxyribonucleic Acid","Dinucleic Acid","Deoxyribose Acid","Dipeptide Nucleic Acid"],ans:0},
+    {q:"The SI unit of force is?",opts:["Newton","Joule","Pascal","Watt"],ans:0},
+    {q:"Which organ pumps blood in the human body?",opts:["Heart","Liver","Kidney","Lung"],ans:0},
+    {q:"Newton's 1st law is also called?",opts:["Law of Inertia","Law of Acceleration","Law of Action","Law of Gravity"],ans:0},
+  ],
+  Physics:[
+    {q:"What is Ohm's Law formula?",opts:["V = IR","V = I/R","V = I+R","V = I²R"],ans:0},
+    {q:"The unit of resistance is?",opts:["Ohm (Ω)","Volt","Ampere","Henry"],ans:0},
+    {q:"Which type of mirror is used in car rear-view?",opts:["Convex","Concave","Plane","Cylindrical"],ans:0},
+    {q:"Work is defined as?",opts:["Force × Distance","Force / Distance","Force + Distance","Mass × Velocity"],ans:0},
+    {q:"Power = Energy / ?",opts:["Time","Force","Distance","Mass"],ans:0},
+    {q:"Speed = Distance / ?",opts:["Time","Velocity","Acceleration","Displacement"],ans:0},
+    {q:"Which waves are used in SONAR?",opts:["Ultrasonic","Infrared","Radio","Gamma"],ans:0},
+    {q:"Electric power formula?",opts:["P = VI","P = V+I","P = V/I","P = V²/I"],ans:0},
+    {q:"Frequency is measured in?",opts:["Hertz (Hz)","Joule","Ampere","Pascal"],ans:0},
+    {q:"What is the formula for kinetic energy?",opts:["½mv²","mv","mgh","mv²"],ans:0},
+  ],
+  English:[
+    {q:"A noun that names a group is called a?",opts:["Collective Noun","Proper Noun","Abstract Noun","Common Noun"],ans:0},
+    {q:"'She runs fast.' — 'fast' is a?",opts:["Adverb","Adjective","Noun","Verb"],ans:0},
+    {q:"What is the past tense of 'go'?",opts:["Went","Goed","Gone","Going"],ans:0},
+    {q:"Which is a synonym for 'happy'?",opts:["Joyful","Sad","Angry","Tired"],ans:0},
+    {q:"A sentence that asks a question ends with?",opts:["?","!",".","—"],ans:0},
+    {q:"The opposite of 'ancient' is?",opts:["Modern","Old","Historic","Antique"],ans:0},
+    {q:"'I before E except after ___'?",opts:["C","B","D","F"],ans:0},
+    {q:"Which is a proper noun?",opts:["India","Country","River","Mountain"],ans:0},
+    {q:"'Very' is what part of speech?",opts:["Adverb","Adjective","Preposition","Conjunction"],ans:0},
+    {q:"Plural of 'child' is?",opts:["Children","Childs","Childes","Childrens"],ans:0},
+  ]
+};
+
+// ══ ATTENDANCE — 1 present day recorded per saved note, nothing pre-filled ══
+// state.attendance = { subject: [{dayNum, date, noteTitle}] }
+
+function recordAttendanceForNote(subject, noteTitle){
+  if(!state.attendance[subject]) state.attendance[subject]=[];
+  const dayNum=state.attendance[subject].length+1;
+  const dateStr=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  state.attendance[subject].push({dayNum, date:dateStr, noteTitle});
+}
+
+function calcOverallAttDisplay(){
+  // Show total present days across all subjects
+  const subs=state.subjects.filter(s=>state.attendance[s]&&state.attendance[s].length>0);
+  if(!subs.length) return null;
+  const total=subs.reduce((a,s)=>(state.attendance[s]||[]).length+a,0);
+  return total; // return count, not percent — e.g. "3 days"
+}
+
+// ══ SAMPLE RESULTS ══ (start empty — unlocked only after notes + tests)
+state.results=[];
+
+// ══ LOGIN ══
+let loginRole='student';
+let studentType='school'; // 'school' or 'college'
+const selectedLoginSubs=['Maths','Science','Physics'];
+const selectedCollegeSubs=[];
+
+// ── MAKAUT Syllabus by Branch + Year ──
+const MAKAUT={
+  CSE:{
+    1:['Mathematics I','Physics','Chemistry','Basic Electrical Engineering','Engineering Graphics','Programming in C','English for Communication','Environmental Science'],
+    2:['Mathematics II','Data Structures','Object Oriented Programming (Java)','Digital Electronics','Discrete Mathematics','Computer Organization','Economics for Engineers','Numerical Methods'],
+    3:['Algorithms','Database Management System','Operating Systems','Computer Networks','Software Engineering','Theory of Computation','Elective I','Elective II'],
+    4:['Compiler Design','Machine Learning','Cloud Computing','Information Security','Project Work','Seminar','Elective III','Elective IV']
+  },
+  IT:{
+    1:['Mathematics I','Physics','Chemistry','Basic Electrical Engineering','Engineering Graphics','Programming in C','English for Communication','Environmental Science'],
+    2:['Mathematics II','Data Structures','Object Oriented Programming','Web Technologies','Discrete Mathematics','Computer Organization','Database Management','Numerical Methods'],
+    3:['Software Engineering','Computer Networks','Operating Systems','Mobile Application Development','Information Security','Multimedia Systems','Elective I','Elective II'],
+    4:['Cloud Computing','IoT & Embedded Systems','Big Data Analytics','Project Management','Project Work','Seminar','Elective III','Elective IV']
+  },
+  ECE:{
+    1:['Mathematics I','Physics','Chemistry','Basic Electrical Engineering','Engineering Graphics','Programming in C','English for Communication','Environmental Science'],
+    2:['Mathematics II','Signals & Systems','Electronic Devices & Circuits','Digital Electronics','Network Theory','Electromagnetic Fields','Analog Communication','Numerical Methods'],
+    3:['Digital Communication','Microprocessor & Microcontroller','VLSI Design','Control Systems','Antenna & Wave Propagation','DSP','Elective I','Elective II'],
+    4:['Wireless Communication','Embedded Systems','Optical Fiber Communication','Radar & TV Engineering','Project Work','Seminar','Elective III','Elective IV']
+  },
+  ME:{
+    1:['Mathematics I','Physics','Chemistry','Engineering Mechanics','Engineering Graphics','Workshop Practice','English for Communication','Environmental Science'],
+    2:['Mathematics II','Thermodynamics','Material Science','Fluid Mechanics','Manufacturing Processes','Strength of Materials','Machine Drawing','Numerical Methods'],
+    3:['Heat Transfer','Machine Design','Theory of Machines','Metrology & Quality Control','Industrial Engineering','Automobile Engineering','Elective I','Elective II'],
+    4:['Refrigeration & Air Conditioning','Power Plant Engineering','CNC Technology','Robotics & Automation','Project Work','Seminar','Elective III','Elective IV']
+  },
+  CE:{
+    1:['Mathematics I','Physics','Chemistry','Engineering Mechanics','Engineering Graphics','Surveying I','English for Communication','Environmental Science'],
+    2:['Mathematics II','Structural Analysis','Fluid Mechanics','Building Materials','Surveying II','Strength of Materials','Concrete Technology','Numerical Methods'],
+    3:['Design of Concrete Structures','Geotechnical Engineering','Transportation Engineering','Hydraulics','Environmental Engineering','Estimating & Costing','Elective I','Elective II'],
+    4:['Steel Structure Design','Foundation Engineering','Construction Management','Irrigation Engineering','Project Work','Seminar','Elective III','Elective IV']
+  },
+  EE:{
+    1:['Mathematics I','Physics','Chemistry','Basic Electrical Engineering','Engineering Graphics','Programming in C','English for Communication','Environmental Science'],
+    2:['Mathematics II','Circuit Theory','Electrical Machines I','Power Systems I','Signals & Systems','Electromagnetic Theory','Analog Electronics','Numerical Methods'],
+    3:['Electrical Machines II','Power Systems II','Control Systems','Power Electronics','Measurement & Instrumentation','Switchgear & Protection','Elective I','Elective II'],
+    4:['High Voltage Engineering','Electric Drives','Renewable Energy Systems','Smart Grid','Project Work','Seminar','Elective III','Elective IV']
+  },
+  MCA:{
+    1:['Discrete Mathematics','Programming in C','Computer Organization','Data Structures','Computer-Based Optimization','Probability & Statistics','English Communication','Lab I'],
+    2:['Design & Analysis of Algorithms','Database Management System','Operating Systems','OOP with Java','Software Engineering','Numerical Methods','Lab II','Lab III'],
+    3:['Computer Networks','Compiler Design','Artificial Intelligence','Web Technology','Elective I','Elective II','Project I','Seminar'],
+    4:['Machine Learning','Cloud Computing','Information Security','Elective III','Project II','Viva Voce']
+  },
+  MBA:{
+    1:['Principles of Management','Managerial Economics','Accounting for Managers','Statistics for Business','Organizational Behaviour','Business Communication','IT for Managers','Environmental Management'],
+    2:['Marketing Management','Financial Management','Human Resource Management','Production & Operations Management','Business Research Methods','Business Law','Elective I','Elective II'],
+    3:['Strategic Management','Entrepreneurship','International Business','Elective III','Elective IV','Summer Internship Report'],
+    4:['Project Work','Elective V','Elective VI','Viva Voce','Seminar']
+  },
+  BCA:{
+    1:['Mathematics I','Physics','Programming in C','Digital Electronics','Computer Fundamentals','English Communication','Lab I'],
+    2:['Mathematics II','Data Structures','Database Management','OOP with C++','Web Design','Numerical Methods','Lab II'],
+    3:['Operating Systems','Computer Networks','Software Engineering','Java Programming','E-Commerce','Multimedia','Lab III'],
+    4:['Artificial Intelligence','Mobile Computing','Information Security','Project Work','Seminar','Elective I']
+  },
+  BSC_CS:{
+    1:['Mathematics I','Physics','Programming in C','Digital Logic','Computer Architecture','English','Lab I'],
+    2:['Mathematics II','Data Structures','DBMS','OOP with Java','Computer Networks','Lab II'],
+    3:['Operating Systems','Software Engineering','Artificial Intelligence','Elective I','Lab III','Project I'],
+    4:['Machine Learning','Cloud Computing','Information Security','Project II','Elective II','Viva']
+  },
+  BSC_MATH:{
+    1:['Calculus','Algebra','Trigonometry','Statistics','Physics','English'],
+    2:['Real Analysis','Linear Algebra','Differential Equations','Numerical Methods','Computer Applications'],
+    3:['Complex Analysis','Abstract Algebra','Probability','Elective I','Lab'],
+    4:['Functional Analysis','Operations Research','Project','Elective II','Viva']
+  },
+  BSC_PHY:{
+    1:['Mathematical Physics','Mechanics','Electricity & Magnetism','Optics','Chemistry','English'],
+    2:['Thermal Physics','Quantum Mechanics I','Electronics','Nuclear Physics','Computer Applications'],
+    3:['Quantum Mechanics II','Solid State Physics','Spectroscopy','Elective I','Lab'],
+    4:['Electromagnetic Theory','Particle Physics','Project','Elective II','Viva']
+  }
+};
+
+function setStudentType(type){
+  studentType=type;
+  document.getElementById('stSchool').classList.toggle('on', type==='school');
+  document.getElementById('stCollege').classList.toggle('on', type==='college');
+  document.getElementById('schoolFields').style.display=type==='school'?'block':'none';
+  document.getElementById('collegeFields').style.display=type==='college'?'block':'none';
+  document.getElementById('lerr').style.display='none';
+}
+
+let parentChildType='school';
+function setParentChildType(type){
+  parentChildType=type;
+  document.getElementById('pStSchool').classList.toggle('on', type==='school');
+  document.getElementById('pStCollege').classList.toggle('on', type==='college');
+  document.getElementById('pSchoolFields').style.display=type==='school'?'block':'none';
+  document.getElementById('pCollegeFields').style.display=type==='college'?'block':'none';
+}
+
+let teacherInstType='school';
+function setTeacherType(type){
+  teacherInstType=type;
+  document.getElementById('tStSchool').classList.toggle('on', type==='school');
+  document.getElementById('tStCollege').classList.toggle('on', type==='college');
+  document.getElementById('tSchoolFields').style.display=type==='school'?'block':'none';
+  document.getElementById('tCollegeFields').style.display=type==='college'?'block':'none';
+}
+
+function updateCollegeSubjects(){
+  const branch=document.getElementById('cBranch').value;
+  const year=parseInt(document.getElementById('cYear').value)||0;
+  const field=document.getElementById('cSubjectField');
+  const chips=document.getElementById('cSubChips');
+  selectedCollegeSubs.length=0;
+  if(!branch||!year){ field.style.display='none'; chips.innerHTML=''; return; }
+  const subs=(MAKAUT[branch]&&MAKAUT[branch][year])||[];
+  if(!subs.length){ field.style.display='none'; return; }
+  field.style.display='block';
+  const icons=['📚','📖','🔬','📐','💻','⚡','🧪','🌐','🏗️','📊','🧠','📡','🔧'];
+  chips.innerHTML=subs.map((s,i)=>`<div class="chip2 on" data-cv="${s}" onclick="toggleCollegeSub(this,'${s.replace(/'/g,'\\\'')}')">${icons[i%icons.length]} ${s}</div>`).join('');
+  // All selected by default
+  subs.forEach(s=>{ if(!selectedCollegeSubs.includes(s)) selectedCollegeSubs.push(s); });
+}
+
+function toggleCollegeSub(el,val){
+  el.classList.toggle('on');
+  const i=selectedCollegeSubs.indexOf(val);
+  if(i>-1) selectedCollegeSubs.splice(i,1); else selectedCollegeSubs.push(val);
+}
+
+// School subject chips
+document.querySelectorAll('#subChips .chip2').forEach(c=>{
+  c.addEventListener('click',()=>{
+    const v=c.dataset.v;
+    c.classList.toggle('on');
+    const i=selectedLoginSubs.indexOf(v);
+    if(i>-1)selectedLoginSubs.splice(i,1);else selectedLoginSubs.push(v);
+  });
+});
+
+function setRole(r,btn){
+  loginRole=r;
+  document.querySelectorAll('.rt').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('sf').classList.toggle('show', r==='student');
+  document.getElementById('pf').classList.toggle('show', r==='parent');
+  document.getElementById('tf').classList.toggle('show', r==='teacher');
+  document.getElementById('lerr').style.display='none';
+}
+function tpw(){const i=document.getElementById('lPw');i.type=i.type==='password'?'text':'password';}
+
+function doLogin(){
+  const email=document.getElementById('lEmail').value.trim();
+  const pw=document.getElementById('lPw').value;
+  const err=document.getElementById('lerr');
+  err.style.display='none';
+
+  // ── STUDENT ──
+  if(loginRole==='student'){
+    const name=document.getElementById('sName').value.trim();
+    if(!name){err.textContent='Please enter your name.';err.style.display='block';return;}
+    state.studentName=name;
+    state.studentType=studentType;
+    if(studentType==='school'){
+      const cls=document.getElementById('sClass').value;
+      if(!cls){err.textContent='Please select your class.';err.style.display='block';return;}
+      state.studentClass=cls;
+      state.subjects=selectedLoginSubs.length?[...selectedLoginSubs]:['Maths','Science'];
+      state.collegeBranch='';state.collegeYear='';
+    } else {
+      const branch=document.getElementById('cBranch').value;
+      const year=document.getElementById('cYear').value;
+      if(!year){err.textContent='Please select your year.';err.style.display='block';return;}
+      if(!branch){err.textContent='Please select your branch.';err.style.display='block';return;}
+      if(!selectedCollegeSubs.length){err.textContent='Please select at least one subject.';err.style.display='block';return;}
+      state.studentClass=`Year ${year}`;
+      state.collegeBranch=branch;
+      state.collegeYear=year;
+      state.subjects=[...selectedCollegeSubs];
+    }
+  }
+
+  // ── PARENT ──
+  if(loginRole==='parent'){
+    const pn=document.getElementById('pName').value.trim();
+    const cn=document.getElementById('pChildName').value.trim();
+    const ph=document.getElementById('pPhone').value.trim();
+    if(!pn){err.textContent='Please enter your name.';err.style.display='block';return;}
+    if(!cn){err.textContent='Please enter your child\'s name.';err.style.display='block';return;}
+    if(!ph){err.textContent='Please enter your phone number.';err.style.display='block';return;}
+    state.studentName=pn;
+    state.parentChildName=cn;
+    state.parentPhone=ph;
+    state.parentChildType=parentChildType;
+    if(parentChildType==='school'){
+      const cc=document.getElementById('pChildClass').value;
+      if(!cc){err.textContent='Please select your child\'s class.';err.style.display='block';return;}
+      state.parentChildClass=cc;
+    } else {
+      const cy=document.getElementById('pCYear').value;
+      const cb=document.getElementById('pCBranch').value;
+      if(!cy){err.textContent='Please select your child\'s year.';err.style.display='block';return;}
+      if(!cb){err.textContent='Please select your child\'s branch.';err.style.display='block';return;}
+      state.parentChildClass=cb+' · Year '+cy;
+    }
+  }
+
+  // ── TEACHER ──
+  if(loginRole==='teacher'){
+    const tn=document.getElementById('tName').value.trim();
+    if(!tn){err.textContent='Please enter your name.';err.style.display='block';return;}
+    state.studentName=tn;
+    state.teacherInstType=teacherInstType;
+    if(teacherInstType==='school'){
+      const ts=document.getElementById('tSubject').value;
+      const tc=document.getElementById('tClass').value;
+      if(!ts){err.textContent='Please select the subject you teach.';err.style.display='block';return;}
+      if(!tc){err.textContent='Please select your class.';err.style.display='block';return;}
+      state.teacherSubject=ts;
+      state.teacherClass=tc;
+    } else {
+      const ts=document.getElementById('tCSubject').value;
+      const tb=document.getElementById('tCBranch').value;
+      const ty=document.getElementById('tCYear').value;
+      if(!ts){err.textContent='Please select the subject you teach.';err.style.display='block';return;}
+      if(!tb){err.textContent='Please select your branch.';err.style.display='block';return;}
+      if(!ty){err.textContent='Please select your year/semester.';err.style.display='block';return;}
+      state.teacherSubject=ts;
+      state.teacherClass=tb+' · '+ty;
+    }
+  }
+
+  if(!email||!/\S+@\S+\.\S+/.test(email)){err.textContent='Please enter a valid email.';err.style.display='block';return;}
+  if(!pw||pw.length<4){err.textContent='Please enter your password (min 4 chars).';err.style.display='block';return;}
+
+  state.role=loginRole;
+
+  // Show correct sidebar nav
+  document.getElementById('nav-student').style.display=loginRole==='student'?'block':'none';
+  document.getElementById('nav-parent').style.display=loginRole==='parent'?'block':'none';
+  document.getElementById('nav-teacher').style.display=loginRole==='teacher'?'block':'none';
+
+  // Sidebar user info
+  const avatarMap={student:'🎒',parent:'👨‍👩‍👧',teacher:'👩‍🏫'};
+  document.getElementById('sbAvatar').textContent=avatarMap[loginRole]||'👤';
+  document.getElementById('sbName').textContent=state.studentName||email.split('@')[0];
+
+  if(loginRole==='student'){
+    const classLabel=studentType==='college'
+      ?`${document.getElementById('cBranch').options[document.getElementById('cBranch').selectedIndex]?.text||'College'} · Yr ${state.collegeYear}`
+      :state.studentClass;
+    document.getElementById('sbClass').textContent=classLabel;
+    buildNoteSubjectSelect();
+    buildTestList();
+    buildAttendance();
+    updateDashboard();
+    navToFirst('dashboard');
+  } else if(loginRole==='parent'){
+    document.getElementById('sbClass').textContent='Parent · '+state.parentChildClass;
+    buildParentDashboard();
+    navToFirst('parent-dashboard');
+  } else if(loginRole==='teacher'){
+    document.getElementById('sbClass').textContent=state.teacherSubject+' · '+state.teacherClass;
+    document.getElementById('td-class').textContent=state.teacherClass;
+    buildTeacherDashboard();
+    navToFirst('teacher-dashboard');
+  }
+
+  startLiveClock();
+  document.getElementById('loginScreen').classList.remove('active');
+  document.getElementById('appScreen').classList.add('active');
+}
+function logout(){
+  // 1. Reset ALL data state
+  state.role='student';
+  state.studentName='';
+  state.studentClass='';
+  state.studentType='school';
+  state.collegeBranch='';
+  state.collegeYear='';
+  state.parentChildName='';
+  state.parentChildClass='';
+  state.parentPhone='';
+  state.teacherSubject='';
+  state.teacherClass='';
+  state.subjects=[];
+  state.notes=[];
+  state.results=[];
+  state.attendance={};
+  state.selectedSubsForNotes='All';
+  state.examActive=false;
+  state.examAnswers={};
+  state.currentExam=null;
+  state.examTimeLeft=1200;
+  if(state.examTimer){clearInterval(state.examTimer);state.examTimer=null;}
+
+  // 2. Reset activity feed
+  activities=[];
+
+  // 3. Reset login form fields
+  document.getElementById('sName').value='';
+  document.getElementById('sClass').value='';
+  document.getElementById('lEmail').value='';
+  document.getElementById('lPw').value='';
+  document.getElementById('lPw').type='password';
+  const ph=document.getElementById('pPhone');
+  if(ph) ph.value='';
+  document.getElementById('lerr').style.display='none';
+
+  // 4. Reset login role back to Student tab
+  loginRole='student';
+  document.querySelectorAll('.rt').forEach(t=>t.classList.remove('on'));
+  document.querySelector('.rt').classList.add('on');
+  document.getElementById('sf').classList.add('show');
+  document.getElementById('pf').classList.remove('show');
+
+  // 5. Reset subject chips on login form
+  selectedLoginSubs.length=0;
+  selectedLoginSubs.push('Maths','Science','Physics');
+  document.querySelectorAll('#subChips .chip2').forEach(c=>{
+    const v=c.dataset.v;
+    c.classList.toggle('on', selectedLoginSubs.includes(v));
+  });
+
+  // 5b. Reset student type to School
+  studentType='school';
+  selectedCollegeSubs.length=0;
+  setStudentType('school');
+  document.getElementById('cYear').value='';
+  document.getElementById('cBranch').value='';
+  document.getElementById('cSubjectField').style.display='none';
+  document.getElementById('cSubChips').innerHTML='';
+
+  // 5c. Hide all nav sections, show correct one on next login
+  document.getElementById('nav-student').style.display='none';
+  document.getElementById('nav-parent').style.display='none';
+  document.getElementById('nav-teacher').style.display='none';
+
+  // 5d. Reset teacher/parent login fields
+  const pn=document.getElementById('pName');if(pn)pn.value='';
+  const cn=document.getElementById('pChildName');if(cn)cn.value='';
+  const pc=document.getElementById('pChildClass');if(pc)pc.value='';
+  const tn=document.getElementById('tName');if(tn)tn.value='';
+  const ts=document.getElementById('tSubject');if(ts)ts.value='';
+  const tc=document.getElementById('tClass');if(tc)tc.value='';
+  const tcs=document.getElementById('tCSubject');if(tcs)tcs.value='';
+  const tcb=document.getElementById('tCBranch');if(tcb)tcb.value='';
+  const tcy=document.getElementById('tCYear');if(tcy)tcy.value='';
+  const pcy=document.getElementById('pCYear');if(pcy)pcy.value='';
+  const pcb=document.getElementById('pCBranch');if(pcb)pcb.value='';
+  document.getElementById('tf').classList.remove('show');
+
+  // Reset school/college toggles
+  parentChildType='school';
+  teacherInstType='school';
+  setParentChildType('school');
+  setTeacherType('school');
+
+  // 6. Reset app sidebar back to Dashboard
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('on'));
+  document.querySelector('.sb-item').classList.add('on');
+
+  // 7. Show dashboard page, hide all others
+  document.querySelectorAll('.main > div').forEach(d=>d.classList.add('hidden'));
+  document.getElementById('pg-dashboard').classList.remove('hidden');
+
+  // 8. Clear notes UI
+  document.getElementById('notesGrid').innerHTML='';
+  document.getElementById('notePills').innerHTML='';
+  document.getElementById('noteTitle').value='';
+  document.getElementById('noteBody').value='';
+  document.getElementById('noteSubject').innerHTML='<option value="" disabled selected>Subject</option>';
+
+  // 9. Reset AI chat to welcome message only
+  document.getElementById('aiChat').innerHTML='<div class="ai-msg bot"><div class="ai-avatar bot">\uD83E\uDD16</div><div class="ai-bubble">Hello! I\'m your EdTech AI Tutor \uD83D\uDC4B<br>Ask me anything \u2014 Maths, Science, History, or any subject. I\'ll explain step by step!</div></div>';
+  document.getElementById('aiInput').value='';
+
+  // 10. Reset test/exam view
+  document.getElementById('testList').innerHTML='';
+  document.getElementById('examView').classList.add('hidden');
+  document.getElementById('testListView').classList.remove('hidden');
+  document.getElementById('questionsContainer').innerHTML='';
+
+  // 11. Clear results and attendance panels
+  document.getElementById('resultContent').innerHTML='';
+  document.getElementById('attContainer').innerHTML='';
+
+  // 12. Reset dashboard stat cards
+  document.getElementById('d-notes').textContent='0';
+  document.getElementById('d-tests').textContent='0';
+  document.getElementById('d-avg').textContent='\u2014';
+  document.getElementById('d-att').textContent='\u2014';
+  document.getElementById('dashNotes').innerHTML='<div style="font-size:13px;color:var(--muted)">No notes yet.</div>';
+  document.getElementById('dashActivity').innerHTML='<div style="font-size:13px;color:var(--muted)">No activity yet.</div>';
+  document.getElementById('sbName').textContent='Student';
+  document.getElementById('sbClass').textContent='Class \u2014';
+
+  // 13. Switch screens
+  document.getElementById('appScreen').classList.remove('active');
+  document.getElementById('loginScreen').classList.add('active');
+
+  // Restart clock with no student name
+  startLiveClock();
+}
+
+// ══ NAVIGATION ══
+function navToFirst(page){
+  document.querySelectorAll('.main > div').forEach(d=>d.classList.add('hidden'));
+  document.getElementById('pg-'+page).classList.remove('hidden');
+}
+
+function nav(page,item){
+  document.querySelectorAll('.main > div').forEach(d=>d.classList.add('hidden'));
+  document.getElementById('pg-'+page).classList.remove('hidden');
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('on'));
+  if(item) item.classList.add('on');
+  if(page==='dashboard') updateDashboard();
+  if(page==='results') buildResults();
+  if(page==='parent-results') buildParentResults();
+  if(page==='parent-attendance') buildParentAttendance();
+  if(page==='parent-notes') buildParentNotes();
+  if(page==='teacher-results') buildTeacherResults();
+  if(page==='teacher-attendance') buildTeacherAttendance();
+}
+
+// ══ PARENT BUILDERS ══
+function buildParentDashboard(){
+  const notes=state.notes.length;
+  const tests=state.results.length;
+  const avg=tests?Math.round(state.results.reduce((a,r)=>a+(r.score/r.total*100),0)/tests)+'%':'—';
+  const attDays=state.subjects.reduce((a,s)=>(state.attendance[s]||[]).length+a,0);
+
+  document.getElementById('pd-notes').textContent=notes;
+  document.getElementById('pd-tests').textContent=tests;
+  document.getElementById('pd-avg').textContent=avg;
+  document.getElementById('pd-att').textContent=attDays>0?attDays+' day'+(attDays>1?'s':''):'—';
+
+  document.getElementById('parentGreet').textContent='Welcome, '+state.studentName+'! 👨‍👩‍👧';
+  document.getElementById('parentSub').textContent='Monitoring '+state.parentChildName+'\'s progress · '+state.parentChildClass;
+
+  // Child profile card
+  const profile=document.getElementById('parentChildProfile');
+  const gradeCol={'A+':'#22c55e','A':'#3b9eff','B+':'#00e5c3','B':'#f59e0b','C':'#f97316','F':'#ff5e7a'};
+  profile.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;margin-bottom:14px">
+      <div style="padding:10px 14px;background:rgba(59,158,255,.07);border-radius:10px;border:1px solid var(--border)">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em">Child's Name</div>
+        <div style="font-weight:600">${state.parentChildName||'—'}</div>
+      </div>
+      <div style="padding:10px 14px;background:rgba(59,158,255,.07);border-radius:10px;border:1px solid var(--border)">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em">Class / Programme</div>
+        <div style="font-weight:600">${state.parentChildClass||'—'}</div>
+      </div>
+      <div style="padding:10px 14px;background:rgba(59,158,255,.07);border-radius:10px;border:1px solid var(--border)">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em">Phone</div>
+        <div style="font-weight:600">${state.parentPhone||'—'}</div>
+      </div>
+      <div style="padding:10px 14px;background:rgba(59,158,255,.07);border-radius:10px;border:1px solid var(--border)">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em">Avg. Score</div>
+        <div style="font-weight:600;color:var(--accent2)">${avg}</div>
+      </div>
+    </div>
+    ${tests?`<div style="padding:12px 16px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);border-radius:10px;font-size:13px">
+      🏆 Latest: <b>${state.results[0].subject}</b> — <b style="color:${gradeCol[state.results[0].grade]||'var(--accent)'}">${state.results[0].score}/${state.results[0].total} (${state.results[0].grade})</b> · ${state.results[0].date}
+    </div>`:'<div style="font-size:13px;color:var(--muted)">No tests taken yet.</div>'}`;
+
+  // Activity card
+  const act=document.getElementById('parentActivity');
+  if(!activities.length){
+    act.innerHTML='<div style="font-size:13px;color:var(--muted)">No activity yet.</div>';
+  } else {
+    act.innerHTML=activities.slice(0,5).map(a=>`<div class="activity-item"><div class="ai-dot" style="background:${a.color}"></div><div><div class="ai-txt">${esc(a.text)}</div><div class="ai-time">${a.time}</div></div></div>`).join('');
+  }
+}
+
+function buildParentResults(){
+  const c=document.getElementById('parentResultContent');
+  if(!state.results.length){
+    c.innerHTML='<div style="color:var(--muted);font-size:13px;padding:20px 0">No test results yet. The student has not taken any tests.</div>';
+    return;
+  }
+  const gradeCol={'A+':'#22c55e','A':'#3b9eff','B+':'#00e5c3','B':'#f59e0b','C':'#f97316','F':'#ff5e7a'};
+  c.innerHTML=`
+  <div class="card mb16">
+    <div class="card-title">📊 Report Card — ${state.parentChildName||'Student'}</div>
+    <table class="result-table">
+      <thead><tr><th>Subject</th><th>Score</th><th>%</th><th>Grade</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>${state.results.map(r=>{const p=Math.round(r.score/r.total*100);return`
+        <tr>
+          <td><b>${r.subject}</b></td>
+          <td>${r.score}/${r.total}</td>
+          <td>${p}%</td>
+          <td style="color:${gradeCol[r.grade]||'var(--accent)'};font-weight:800;font-family:var(--fh)">${r.grade}</td>
+          <td style="color:var(--muted)">${r.date}</td>
+          <td><span class="pill ${p>=40?'pass':'fail'}">${p>=40?'Pass':'Fail'}</span></td>
+        </tr>`}).join('')}
+      </tbody>
+    </table>
+    <button class="btn sm success" style="margin-top:16px" onclick="alert('📱 Report sent to ${state.parentPhone||'registered phone'}!')">📤 Download Report</button>
+  </div>`;
+}
+
+function buildParentAttendance(){
+  const c=document.getElementById('parentAttContent');
+  const subjectColors={Maths:'#3b9eff',Science:'#00e5c3',Physics:'#ec4899',English:'#a855f7',Hindi:'#f59e0b',Chemistry:'#22c55e',Biology:'#06b6d4',Computer:'#f97316'};
+  const subsWithAtt=state.subjects.filter(s=>state.attendance[s]&&state.attendance[s].length>0);
+  if(!subsWithAtt.length){
+    c.innerHTML='<div style="color:var(--muted);font-size:13px;padding:20px 0">No attendance recorded yet. Attendance is marked when the student saves study notes.</div>';
+    return;
+  }
+  const total=subsWithAtt.reduce((a,s)=>(state.attendance[s]||[]).length+a,0);
+  c.innerHTML=`<div style="background:linear-gradient(135deg,rgba(59,158,255,.08),rgba(0,229,195,.06));border:1px solid rgba(59,158,255,.2);border-radius:14px;padding:18px 22px;margin-bottom:20px;font-size:13px">
+    👶 <b style="color:var(--text)">${state.parentChildName||'Child'}</b> has been present for <b style="color:var(--accent2)">${total} day${total>1?'s':''}</b> across ${subsWithAtt.length} subject${subsWithAtt.length>1?'s':''}.
+  </div>`+
+  subsWithAtt.map(sub=>{
+    const days=state.attendance[sub]||[];
+    const col=subjectColors[sub]||'var(--accent)';
+    return `<div class="att-subject-row">
+      <div class="att-top">
+        <div class="att-name" style="color:${col}"><span style="width:10px;height:10px;border-radius:3px;background:${col};display:inline-block"></span> ${sub}</div>
+        <div style="text-align:right"><div class="att-pct" style="color:var(--success)">${days.length} days</div><div style="font-size:11px;color:var(--muted)">100% present</div></div>
+      </div>
+      <div class="att-bar-bg"><div class="att-bar" style="width:100%;background:${col}"></div></div>
+      <div class="att-days">${days.map(d=>`<div class="att-day p" title="Day ${d.dayNum} · ${d.date}">${d.dayNum}</div>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildParentNotes(){
+  const c=document.getElementById('parentNotesContent');
+  if(!state.notes.length){
+    c.innerHTML='<div style="color:var(--muted);font-size:13px;padding:20px 0">No notes written yet by the student.</div>';
+    return;
+  }
+  c.innerHTML=`<div style="font-size:13px;color:var(--muted);margin-bottom:16px">${state.parentChildName||'Student'} has written <b style="color:var(--text)">${state.notes.length} note${state.notes.length>1?'s':''}</b>.</div>`+
+  `<div class="notes-grid">${state.notes.map(n=>`
+    <div class="note-card">
+      <span class="nc-subject" style="background:${SCOL[n.subject]||'var(--accent)'}20;color:${SCOL[n.subject]||'var(--accent)'}">${n.subject}</span>
+      <div class="nc-title">${esc(n.title)}</div>
+      <div class="nc-preview">${esc(n.body)}</div>
+      <div class="nc-meta"><span>📅 ${n.date}</span></div>
+    </div>`).join('')}</div>`;
+}
+
+// ══ TEACHER BUILDERS ══
+function buildTeacherDashboard(){
+  const attDays=state.attendance[state.teacherSubject]?state.attendance[state.teacherSubject].length:0;
+  const subResults=state.results.filter(r=>r.subject===state.teacherSubject);
+
+  document.getElementById('teacherGreet').textContent='Welcome, '+state.studentName+'! 👩‍🏫';
+  document.getElementById('teacherSub').textContent='Teaching '+state.teacherSubject+' · '+state.teacherClass;
+  document.getElementById('td-subject').textContent=state.teacherSubject;
+  document.getElementById('td-class').textContent=state.teacherClass;
+  document.getElementById('td-tests').textContent=subResults.length;
+  document.getElementById('td-att').textContent=attDays>0?attDays+' day'+(attDays>1?'s':''):'—';
+
+  document.getElementById('teacherProfile').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+      <div style="padding:10px 14px;background:rgba(168,85,247,.07);border-radius:10px;border:1px solid var(--border)">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px;text-transform:uppercase">Name</div>
+        <div style="font-weight:600">${state.studentName}</div>
+      </div>
+      <div style="padding:10px 14px;background:rgba(168,85,247,.07);border-radius:10px;border:1px solid var(--border)">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px;text-transform:uppercase">Subject</div>
+        <div style="font-weight:600">${state.teacherSubject}</div>
+      </div>
+      <div style="padding:10px 14px;background:rgba(168,85,247,.07);border-radius:10px;border:1px solid var(--border)">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px;text-transform:uppercase">Class / Branch</div>
+        <div style="font-weight:600">${state.teacherClass}</div>
+      </div>
+      <div style="padding:10px 14px;background:rgba(168,85,247,.07);border-radius:10px;border:1px solid var(--border)">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px;text-transform:uppercase">Tests Tracked</div>
+        <div style="font-weight:600;color:var(--accent2)">${subResults.length}</div>
+      </div>
+    </div>`;
+
+  document.getElementById('teacherQuickActions').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
+      <div onclick="nav('teacher-results',document.querySelector('[onclick*=teacher-results]'))" style="padding:12px 16px;background:rgba(59,158,255,.07);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        🏆 <span>View <b>${subResults.length}</b> test result${subResults.length!==1?'s':''} for ${state.teacherSubject}</span>
+      </div>
+      <div onclick="nav('teacher-attendance',document.querySelector('[onclick*=teacher-attendance]'))" style="padding:12px 16px;background:rgba(0,229,195,.07);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s" onmouseover="this.style.borderColor='var(--accent2)'" onmouseout="this.style.borderColor='var(--border)'">
+        📅 <span>View attendance — <b>${attDays}</b> day${attDays!==1?'s':''} recorded</span>
+      </div>
+      <div onclick="nav('teacher-ai',document.querySelector('[onclick*=teacher-ai]'))" style="padding:12px 16px;background:rgba(168,85,247,.07);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s" onmouseover="this.style.borderColor='var(--accent3)'" onmouseout="this.style.borderColor='var(--border)'">
+        🤖 <span>Open <b>AI Teaching Assistant</b> for lesson help</span>
+      </div>
+    </div>`;
+}
+
+function buildTeacherResults(){
+  const c=document.getElementById('teacherResultContent');
+  const subResults=state.results.filter(r=>r.subject===state.teacherSubject);
+  if(!subResults.length){
+    c.innerHTML=`<div style="color:var(--muted);font-size:13px;padding:20px 0">No test results for <b style="color:var(--text)">${state.teacherSubject}</b> yet. Students need to complete tests to see results here.</div>`;
+    return;
+  }
+  const gradeCol={'A+':'#22c55e','A':'#3b9eff','B+':'#00e5c3','B':'#f59e0b','C':'#f97316','F':'#ff5e7a'};
+  c.innerHTML=`<div class="card"><div class="card-title">📊 ${state.teacherSubject} — Results (${state.teacherClass})</div>
+    <table class="result-table"><thead><tr><th>Subject</th><th>Score</th><th>%</th><th>Grade</th><th>Date</th></tr></thead>
+    <tbody>${subResults.map(r=>{const p=Math.round(r.score/r.total*100);return`
+      <tr><td><b>${r.subject}</b></td><td>${r.score}/${r.total}</td><td>${p}%</td>
+      <td style="color:${gradeCol[r.grade]||'var(--accent)'};font-weight:800">${r.grade}</td>
+      <td style="color:var(--muted)">${r.date}</td></tr>`}).join('')}
+    </tbody></table></div>`;
+}
+
+function buildTeacherAttendance(){
+  const c=document.getElementById('teacherAttContent');
+  const sub=state.teacherSubject;
+  const days=state.attendance[sub]||[];
+  if(!days.length){
+    c.innerHTML=`<div style="color:var(--muted);font-size:13px;padding:20px 0">No attendance recorded for <b style="color:var(--text)">${sub}</b> yet.</div>`;
+    return;
+  }
+  c.innerHTML=`<div class="att-subject-row">
+    <div class="att-top">
+      <div class="att-name" style="color:var(--accent3)">${sub}</div>
+      <div style="text-align:right"><div class="att-pct" style="color:var(--success)">${days.length} days</div></div>
+    </div>
+    <div class="att-bar-bg"><div class="att-bar" style="width:100%;background:var(--accent3)"></div></div>
+    <div class="att-days">${days.map(d=>`<div class="att-day p" title="Day ${d.dayNum} · ${d.date}">${d.dayNum}</div>`).join('')}</div>
+  </div>`;
+}
+
+function sendTeacherAI(){
+  const inp=document.getElementById('teacherAiInput');
+  const q=inp.value.trim();if(!q)return;
+  inp.value='';
+  const chat=document.getElementById('teacherAiChat');
+  const uDiv=document.createElement('div');
+  uDiv.className='ai-msg user anim';
+  const ua=document.createElement('div');ua.className='ai-avatar user';ua.textContent='👩‍🏫';
+  const ub=document.createElement('div');ub.className='ai-bubble';ub.textContent=q;
+  uDiv.appendChild(ua);uDiv.appendChild(ub);chat.appendChild(uDiv);
+  const td=document.createElement('div');td.className='ai-msg bot anim';td.id='tTyping';
+  td.innerHTML='<div class="ai-avatar bot">🤖</div><div class="ai-bubble"><div class="ai-typing"><span></span><span></span><span></span></div></div>';
+  chat.appendChild(td);
+  requestAnimationFrame(()=>chat.scrollTop=chat.scrollHeight);
+  setTimeout(()=>{
+    const tm=document.getElementById('tTyping');if(tm)tm.remove();
+    const ans=getAIAnswer(q);
+    const bDiv=document.createElement('div');bDiv.className='ai-msg bot anim';
+    const ba=document.createElement('div');ba.className='ai-avatar bot';ba.textContent='🤖';
+    const bb=document.createElement('div');bb.className='ai-bubble';bb.innerHTML=ans;
+    bDiv.appendChild(ba);bDiv.appendChild(bb);chat.appendChild(bDiv);
+    requestAnimationFrame(()=>chat.scrollTop=chat.scrollHeight);
+  },900+Math.random()*500);
+}
+
+// ══ NOTES ══
+function buildNoteSubjectSelect(){
+  const sel=document.getElementById('noteSubject');
+  sel.innerHTML='<option value="" disabled selected>Subject</option>';
+  state.subjects.forEach(s=>{
+    const o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o);
+  });
+  buildNotePills();
+}
+function buildNotePills(){
+  const c=document.getElementById('notePills');
+  c.innerHTML='';
+  const all=document.createElement('div');
+  all.className='spill'+(state.selectedSubsForNotes==='All'?' on':'');
+  all.textContent='📚 All';
+  all.onclick=()=>{state.selectedSubsForNotes='All';buildNotePills();renderNotes();}
+  c.appendChild(all);
+  state.subjects.forEach(s=>{
+    const p=document.createElement('div');
+    p.className='spill'+(state.selectedSubsForNotes===s?' on':'');
+    p.textContent=s;
+    p.style.borderColor=SCOL[s]||'var(--border)';
+    if(state.selectedSubsForNotes===s)p.style.background=`${SCOL[s]||'var(--accent2)'}20`,p.style.color=SCOL[s]||'var(--accent2)';
+    p.onclick=()=>{state.selectedSubsForNotes=s;buildNotePills();renderNotes();}
+    c.appendChild(p);
+  });
+}
+function saveNote(){
+  const title=document.getElementById('noteTitle').value.trim();
+  const subject=document.getElementById('noteSubject').value;
+  const body=document.getElementById('noteBody').value.trim();
+  if(!title||!subject||!body){alert('Please fill in the title, subject, and note body.');return;}
+  const isFirstNoteForSubject=!hasNoteForSubject(subject);
+  state.notes.unshift({id:Date.now(),title,subject,body,date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})});
+  // Record exactly ONE attendance day for this note
+  recordAttendanceForNote(subject, title);
+  clearNoteForm();renderNotes();updateDashboard();
+  // Refresh tests and attendance since a new note may unlock them
+  buildTestList();
+  buildAttendance();
+  addActivity(`Saved note: "${title}" (${subject})`,'#3b9eff');
+  if(isFirstNoteForSubject){
+    showToast(`🎉 ${subject} test & attendance unlocked!`,'var(--accent2)');
+  } else {
+    showToast(`📅 Attendance marked Present for ${subject}!`,'var(--accent)');
+  }
+}
+function clearNoteForm(){
+  document.getElementById('noteTitle').value='';
+  document.getElementById('noteSubject').value='';
+  document.getElementById('noteBody').value='';
+}
+function deleteNote(id){
+  state.notes=state.notes.filter(n=>n.id!==id);renderNotes();updateDashboard();
+}
+function renderNotes(){
+  const grid=document.getElementById('notesGrid');
+  const filtered=state.selectedSubsForNotes==='All'?state.notes:state.notes.filter(n=>n.subject===state.selectedSubsForNotes);
+  if(!filtered.length){grid.innerHTML='<div style="color:var(--muted);font-size:13px;padding:20px 0;">No notes for this subject yet.</div>';return;}
+  grid.innerHTML=filtered.map(n=>`
+    <div class="note-card">
+      <span class="nc-subject" style="background:${SCOL[n.subject]||'var(--accent)'}20;color:${SCOL[n.subject]||'var(--accent)'}">${n.subject}</span>
+      <div class="nc-title">${esc(n.title)}</div>
+      <div class="nc-preview">${esc(n.body)}</div>
+      <div class="nc-meta">
+        <span>📅 ${n.date}</span>
+        <button class="nc-del" onclick="deleteNote(${n.id});event.stopPropagation()">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// ══ EXTENDED AI KNOWLEDGE BASE ══
+const AI_EXTRA = [
+  {q:["photosynthesis","plants make food","chlorophyll","carbon dioxide","sunlight food"],
+   a:`<b>Photosynthesis 🌿</b><br><br>📌 Process by which green plants make their own food using sunlight.<br><br>🧪 <b>Equation:</b><br><span style="font-family:monospace;background:rgba(59,158,255,.1);padding:4px 8px;border-radius:6px;display:inline-block;margin:4px 0">6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂</span><br><br>🔬 <b>Two stages:</b><br>1. <b>Light Reaction</b> (Thylakoid) — captures sunlight, splits water, releases O₂<br>2. <b>Calvin Cycle</b> (Stroma) — uses CO₂ to make glucose<br><br>✅ <b>Needed:</b> Sunlight · Water · CO₂ · Chlorophyll<br>✅ <b>Produced:</b> Glucose (food) + Oxygen`},
+  {q:["newton","3rd","third","action reaction","law of motion","laws of motion"],
+   a:`<b>Newton's Third Law ⚡</b><br><br>📌 <i>"For every action, there is an equal and opposite reaction."</i><br><br>🔬 <b>Examples:</b><br>• Rocket expels gas downward → rocket moves upward 🚀<br>• You push a wall → wall pushes you back<br>• Gun fires bullet → gun recoils backward<br><br>🧮 <b>Formula:</b> <span style="font-family:monospace;background:rgba(59,158,255,.1);padding:4px 8px;border-radius:6px">F_AB = −F_BA</span><br><br>⚠️ Both forces are equal in magnitude, opposite in direction, and act on <i>different</i> bodies.`},
+  {q:["quadratic","quadratic equation","ax2","solve equation","discriminant","roots"],
+   a:`<b>Quadratic Equations 📐</b><br><br>Standard form: <span style="font-family:monospace;background:rgba(59,158,255,.1);padding:4px 8px;border-radius:6px">ax² + bx + c = 0</span><br><br><b>Method 1 — Quadratic Formula:</b><br><span style="font-family:monospace;background:rgba(0,229,195,.08);padding:6px 10px;border-radius:6px;display:inline-block;margin:4px 0">x = (−b ± √(b²−4ac)) / 2a</span><br><br><b>Method 2 — Factoring:</b><br>x² + 5x + 6 = 0 → (x+2)(x+3) = 0 → x = −2 or −3<br><br><b>Discriminant (D = b²−4ac):</b><br>• D > 0 → two real roots<br>• D = 0 → one real root<br>• D < 0 → no real roots`},
+  {q:["speed","velocity","difference between speed","scalar vector"],
+   a:`<b>Speed vs Velocity 🏃</b><br><br><table style="border-collapse:collapse;font-size:12px;width:100%"><tr style="background:rgba(59,158,255,.1)"><th style="padding:6px 10px;text-align:left;border:1px solid rgba(99,179,255,.2)"></th><th style="padding:6px 10px;border:1px solid rgba(99,179,255,.2)">Speed</th><th style="padding:6px 10px;border:1px solid rgba(99,179,255,.2)">Velocity</th></tr><tr><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Type</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Scalar</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Vector</td></tr><tr><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Direction</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">No</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Yes</td></tr><tr><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Formula</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">d / t</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">displacement / t</td></tr></table><br>💡 A car going in a circle at constant speed has <i>changing velocity</i> (direction changes)!`},
+  {q:["french revolution","1789","revolution","bastille","storming","napoleon","robespierre"],
+   a:`<b>French Revolution 🏛️ (1789–1799)</b><br><br>📌 <b>Causes:</b><br>• Financial crisis & heavy taxes on commoners<br>• Inequality between 3 Estates (clergy, nobility, common people)<br>• Enlightenment ideas of liberty & equality<br>• Bread shortages and famine<br><br>📅 <b>Key Events:</b><br>• <b>1789</b> — Storming of the Bastille (July 14)<br>• <b>1792</b> — Monarchy abolished<br>• <b>1793–94</b> — Reign of Terror under Robespierre<br>• <b>1799</b> — Napoleon Bonaparte takes power<br><br>🌍 <b>Impact:</b> Spread democracy, nationalism, and human rights across Europe`},
+  {q:["machine learning","artificial intelligence","ai","deep learning","neural network","ml"],
+   a:`<b>Machine Learning 🤖</b><br><br>📌 AI where computers <i>learn from data</i> without being explicitly programmed.<br><br>🔬 <b>3 Types:</b><br>1. <b>Supervised</b> — learns from labelled data (spam detection, image recognition)<br>2. <b>Unsupervised</b> — finds hidden patterns (clustering, recommendation)<br>3. <b>Reinforcement</b> — learns by reward & trial (games, robotics)<br><br>🛠️ <b>Real examples:</b> Netflix recommendations · Voice assistants · Self-driving cars<br><br>🧮 Core idea: Find function f(x) that maps input → output by minimising error`},
+  {q:["ohm","ohm's law","resistance","voltage","current","v=ir"],
+   a:`<b>Ohm's Law ⚡</b><br><br>📌 At constant temperature, current (I) is proportional to voltage (V).<br><br>🧮 <b>Formula:</b><br><span style="font-family:monospace;background:rgba(59,158,255,.1);padding:6px 12px;border-radius:6px;display:inline-block;font-size:15px;margin:4px 0"><b>V = I × R</b></span><br><br>• <b>V</b> = Voltage (Volts)<br>• <b>I</b> = Current (Amperes)<br>• <b>R</b> = Resistance (Ohms Ω)<br><br>🔺 <b>Triangle trick:</b> V = IR · I = V/R · R = V/I<br><br>🔌 <b>Example:</b> V=12V, R=4Ω → I = 12/4 = <b>3A</b>`},
+  {q:["dna","replication","dna replication","helicase","polymerase","chromosome","genetic"],
+   a:`<b>DNA Replication 🧬</b><br><br>📌 DNA copies itself before cell division.<br><br>🔬 <b>Steps:</b><br>1. <b>Initiation</b> — Helicase unwinds double helix at origin<br>2. <b>Elongation</b> — DNA Polymerase adds complementary nucleotides (5'→3')<br>3. <b>Termination</b> — Two identical DNA molecules formed<br><br>🔑 <b>Key enzymes:</b><br>• <b>Helicase</b> — unwinds DNA<br>• <b>DNA Polymerase</b> — builds new strand<br>• <b>Ligase</b> — joins Okazaki fragments<br><br>📌 Base pairing rule: A–T · G–C (Chargaff's Rule)`},
+  {q:["vaccine","immunity","antibody","immune system","how vaccine"],
+   a:`<b>How Vaccines Work 💉</b><br><br>📌 Vaccines train the immune system to fight a disease without getting sick.<br><br>🔬 <b>Process:</b><br>1. Vaccine introduces harmless antigen (part of pathogen)<br>2. Immune system produces <b>antibodies</b><br>3. <b>Memory cells</b> are created<br>4. Future infection → immune system recognises & destroys it fast!<br><br>🧬 <b>Types:</b><br>• Live attenuated (weakened virus) — MMR vaccine<br>• mRNA vaccines — COVID-19<br>• Inactivated — Flu, Polio<br>• Subunit — Hepatitis B`},
+  {q:["mitosis","meiosis","cell division","pmat","prophase","metaphase","anaphase","telophase"],
+   a:`<b>Mitosis vs Meiosis 🔬</b><br><br><table style="border-collapse:collapse;font-size:12px;width:100%"><tr style="background:rgba(59,158,255,.1)"><th style="padding:6px 10px;text-align:left;border:1px solid rgba(99,179,255,.2)"></th><th style="padding:6px 10px;border:1px solid rgba(99,179,255,.2)">Mitosis</th><th style="padding:6px 10px;border:1px solid rgba(99,179,255,.2)">Meiosis</th></tr><tr><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Divisions</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">1</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">2</td></tr><tr><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Cells made</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">2 (diploid)</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">4 (haploid)</td></tr><tr><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Purpose</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Growth & repair</td><td style="padding:6px 10px;border:1px solid rgba(99,179,255,.1)">Reproduction</td></tr></table><br>🧠 <b>Memory trick for Mitosis phases:</b> <b>PMAT</b> — <i>Please Meet A Teacher</i><br>Prophase → Metaphase → Anaphase → Telophase → Cytokinesis`},
+  {q:["pythagorean","pythagoras","hypotenuse","right triangle","a2+b2"],
+   a:`<b>Pythagorean Theorem 📐</b><br><br>📌 In a right-angled triangle:<br><span style="font-family:monospace;background:rgba(59,158,255,.1);padding:6px 12px;border-radius:6px;display:inline-block;font-size:15px;margin:4px 0"><b>a² + b² = c²</b></span><br><br>• <b>a, b</b> = the two shorter sides (legs)<br>• <b>c</b> = the longest side (hypotenuse, opposite the right angle)<br><br>🔢 <b>Example:</b> a=3, b=4 → c = √(9+16) = √25 = <b>5</b><br><br>🔺 Common Pythagorean triples: 3-4-5 · 5-12-13 · 8-15-17`},
+  {q:["periodic table","element","atomic number","proton","electron","neutron","atom","molecule"],
+   a:`<b>Atoms & the Periodic Table ⚗️</b><br><br>📌 <b>Atom structure:</b><br>• <b>Protons</b> (+) — nucleus, determines element<br>• <b>Neutrons</b> (neutral) — nucleus, determines isotope<br>• <b>Electrons</b> (−) — orbit nucleus in shells<br><br>🔬 <b>Atomic number</b> = number of protons<br><b>Mass number</b> = protons + neutrons<br><br>📊 <b>Periodic Table:</b><br>• Arranged by atomic number (left → right)<br>• Groups (columns) share chemical properties<br>• Periods (rows) = number of electron shells<br><br>💡 Metals (left) · Non-metals (right) · Metalloids (staircase)`},
+  {q:["gravity","gravitation","free fall","g force","9.8","gravitational force","weight"],
+   a:`<b>Gravity & Gravitation 🌍</b><br><br>📌 Newton's Law of Gravitation:<br><span style="font-family:monospace;background:rgba(59,158,255,.1);padding:6px 10px;border-radius:6px;display:inline-block;margin:4px 0">F = G × (m₁ × m₂) / r²</span><br><br>• <b>G</b> = 6.674 × 10⁻¹¹ N·m²/kg² (gravitational constant)<br>• <b>g on Earth</b> = 9.8 m/s² (acceleration due to gravity)<br><br>⚖️ <b>Weight vs Mass:</b><br>• Mass = amount of matter (kg) — constant everywhere<br>• Weight = mass × g (N) — changes on Moon/Mars!<br><br>🍎 Free fall: all objects fall at same rate regardless of mass`},
+  {q:["photon","light","wave","electromagnetic","spectrum","wavelength","frequency","infrared","ultraviolet"],
+   a:`<b>Light & Electromagnetic Spectrum 🌈</b><br><br>📌 Light is an electromagnetic wave that travels at <b>3 × 10⁸ m/s</b>.<br><br>🌈 <b>EM Spectrum (low → high frequency):</b><br>Radio → Microwaves → Infrared → <b>Visible Light</b> → Ultraviolet → X-rays → Gamma rays<br><br>🔬 <b>Visible light colours (ROYGBIV):</b><br>Red · Orange · Yellow · Green · Blue · Indigo · Violet<br><br>🧮 <b>Formula:</b> c = f × λ<br>• c = speed of light<br>• f = frequency (Hz)<br>• λ = wavelength (m)`},
+  {q:["trigonometry","sin","cos","tan","sine","cosine","tangent","sohcahtoa"],
+   a:`<b>Trigonometry 📐</b><br><br>📌 <b>SOH-CAH-TOA</b> (right-angled triangles):<br><br><span style="font-family:monospace;background:rgba(59,158,255,.1);padding:6px 10px;border-radius:6px;display:block;margin:4px 0">sin θ = Opposite / Hypotenuse<br>cos θ = Adjacent / Hypotenuse<br>tan θ = Opposite / Adjacent</span><br><br>📊 <b>Key values:</b><br>• sin 30° = 0.5 · cos 60° = 0.5 · tan 45° = 1<br>• sin 90° = 1 · cos 0° = 1<br><br>💡 <b>Memory trick:</b> <b>S</b>ome <b>O</b>ld <b>H</b>orse <b>C</b>aught <b>A</b> <b>H</b>are <b>T</b>urning <b>O</b>ver <b>A</b>pples`},
+  {q:["water cycle","evaporation","condensation","precipitation","rain","hydrological"],
+   a:`<b>The Water Cycle 💧</b><br><br>📌 Continuous movement of water through the environment.<br><br>🔄 <b>Stages:</b><br>1. <b>Evaporation</b> — heat turns water into vapour (oceans, lakes)<br>2. <b>Transpiration</b> — plants release water vapour<br>3. <b>Condensation</b> — vapour cools, forms clouds<br>4. <b>Precipitation</b> — water falls as rain/snow/hail<br>5. <b>Collection</b> — water collects in oceans/rivers/groundwater<br><br>☀️ Energy for the cycle comes from the Sun!`},
+  {q:["democracy","government","parliament","constitution","fundamental rights","india"],
+   a:`<b>Democracy & Indian Government 🇮🇳</b><br><br>📌 India is the world's largest <b>Parliamentary Democracy</b>.<br><br>🏛️ <b>Three branches:</b><br>• <b>Legislature</b> — Parliament (Lok Sabha + Rajya Sabha) — makes laws<br>• <b>Executive</b> — President, PM, Cabinet — implements laws<br>• <b>Judiciary</b> — Supreme Court, High Courts — interprets laws<br><br>📜 <b>Fundamental Rights (Part III):</b><br>Right to Equality · Freedom · Against Exploitation · Religion · Education & Culture · Constitutional Remedies<br><br>📅 Constitution adopted: <b>26 January 1950</b>`},
+  {q:["acid","base","ph","neutral","alkali","litmus","indicator","acidic","basic"],
+   a:`<b>Acids, Bases & pH ⚗️</b><br><br>📊 <b>pH Scale (0–14):</b><br>• 0–6 → Acid (lemon juice pH 2, vinegar pH 3)<br>• 7 → Neutral (pure water)<br>• 8–14 → Base/Alkali (baking soda pH 9, bleach pH 12)<br><br>🔬 <b>Indicators:</b><br>• Litmus — red in acid, blue in base<br>• Universal indicator — full colour range<br>• Phenolphthalein — colourless in acid, pink in base<br><br>⚗️ Acid + Base → Salt + Water (Neutralisation)`},
+  {q:["area","perimeter","volume","circle","rectangle","triangle","cube","cylinder","formula"],
+   a:`<b>Area, Perimeter & Volume Formulas 📐</b><br><br><b>2D Shapes:</b><br>• Rectangle: Area = l×b · Perimeter = 2(l+b)<br>• Triangle: Area = ½×b×h · Perimeter = a+b+c<br>• Circle: Area = πr² · Circumference = 2πr<br><br><b>3D Shapes:</b><br>• Cube: Volume = a³ · Surface area = 6a²<br>• Cuboid: Volume = l×b×h<br>• Cylinder: Volume = πr²h · CSA = 2πrh<br>• Sphere: Volume = (4/3)πr³<br><br>📌 π ≈ 3.14159 or 22/7`},
+];
+
+// ══ AI TUTOR ══
+function askSuggested(el){
+  const raw=el.dataset.q||el.textContent;
+  document.getElementById('aiInput').value=raw.trim();
+  sendAI();
+}
+
+function appendAIMsg(role, content, isHTML){
+  const chat=document.getElementById('aiChat');
+  const div=document.createElement('div');
+  div.className='ai-msg '+role+' anim';
+  const avatar=document.createElement('div');
+  avatar.className='ai-avatar '+role;
+  avatar.textContent=role==='bot'?'🤖':'👤';
+  const bubble=document.createElement('div');
+  bubble.className='ai-bubble';
+  // Bot answers are pre-formatted HTML; user messages are plain text (set as textContent to avoid XSS)
+  if(isHTML){
+    bubble.innerHTML=content;
+  } else {
+    bubble.textContent=content;
+  }
+  div.appendChild(avatar);
+  div.appendChild(bubble);
+  chat.appendChild(div);
+  requestAnimationFrame(()=>{ chat.scrollTop=chat.scrollHeight; });
+  return div;
+}
+
+function sendAI(){
+  const inp=document.getElementById('aiInput');
+  const q=inp.value.trim();
+  if(!q) return;
+  inp.value='';
+  inp.focus();
+
+  // User message — plain text (no HTML escaping needed, textContent handles it)
+  appendAIMsg('user', q, false);
+
+  // Typing indicator
+  const chat=document.getElementById('aiChat');
+  const typingDiv=document.createElement('div');
+  typingDiv.className='ai-msg bot anim';
+  typingDiv.id='typingMsg';
+  const ta=document.createElement('div');ta.className='ai-avatar bot';ta.textContent='🤖';
+  const tb=document.createElement('div');tb.className='ai-bubble';
+  tb.innerHTML='<div class="ai-typing"><span></span><span></span><span></span></div>';
+  typingDiv.appendChild(ta);typingDiv.appendChild(tb);
+  chat.appendChild(typingDiv);
+  requestAnimationFrame(()=>{ chat.scrollTop=chat.scrollHeight; });
+
+  const delay=800+Math.random()*500;
+  setTimeout(()=>{
+    const tm=document.getElementById('typingMsg');
+    if(tm) tm.remove();
+    const ans=getAIAnswer(q);
+    // Bot answer is HTML (pre-formatted with <b>, <br> etc.)
+    appendAIMsg('bot', ans, true);
+    addActivity('Asked AI: "'+q.slice(0,42)+'…"','#00e5c3');
+  }, delay);
+}
+
+function getAIAnswer(q){
+  const qRaw=q.trim();
+  const safeQ=qRaw.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  // ══ LAYER 1: MATH CALCULATOR ══
+  // Detect and evaluate pure arithmetic before any text processing
+  const mathResult=tryMath(qRaw);
+  if(mathResult!==null) return mathResult;
+
+  // ══ LAYER 2: Normalise for keyword search ══
+  const ql=qRaw.toLowerCase()
+    .replace(/['']/g,' ')        // remove apostrophes (ohm's → ohm s)
+    .replace(/[^\w\s]/g,' ')     // remove remaining punctuation
+    .replace(/\s+/g,' ')
+    .trim();
+
+  // ══ LAYER 3: Search AI_EXTRA (extended answers) ══
+  for(const entry of AI_EXTRA){
+    if(entry.q.some(kw=>ql.includes(kw))) return entry.a;
+  }
+
+  // ══ LAYER 4: Search AI_DB (original answers) ══
+  for(const entry of AI_DB){
+    if(entry.q.some(kw=>ql.includes(kw))) return entry.a.replace(/\n/g,'<br>');
+  }
+
+  // ══ LAYER 5: Conversational / greeting patterns ══
+  if(/^(hi|hello|hey|helo|hii|good morning|good evening|good afternoon|namaste)\b/.test(ql)){
+    return `<b>Hello! 👋</b><br><br>I'm your EdTech AI Tutor. I'm here to help you with any subject — Maths, Science, Physics, Chemistry, Biology, English, History, Computer Science, and more!<br><br>Just type your doubt or question and I'll explain it step by step. 🌟`;
+  }
+  if(/^(thank|thanks|thank you|thx|ty)\b/.test(ql)){
+    return `You're welcome! 😊<br><br>Keep studying hard and feel free to ask any doubt anytime. You've got this! 💪🌟`;
+  }
+  if(/\b(who are you|what are you|your name|introduce yourself)\b/.test(ql)){
+    return `<b>I'm EdTech AI Tutor 🤖</b><br><br>I'm an intelligent study assistant designed to help students with:<br>• 📐 Maths & calculations<br>• 🔬 Science & lab concepts<br>• ⚡ Physics formulas<br>• 🧪 Chemistry reactions<br>• 🌿 Biology & life science<br>• 📖 English grammar<br>• 💻 Computer Science<br>• 🏛️ History & Social Studies<br><br>Just ask me anything! I'll explain it clearly. 🌟`;
+  }
+
+  // ══ LAYER 6: Subject-aware fallback ══
+  const subjectHints={
+    maths:['equation','number','calculat','sum','product','prime','angle','geometry','algebra','formula','proof','digit','fraction','decimal','ratio','percentage','statistics','probability','matrix','integral','derivative','calculus','logarithm','arithmetic','addition','subtract','multiply','divide','square','cube','root','factor','lcm','hcf','average','mean','median','mode'],
+    physics:['force','energy','power','motion','wave','sound','optic','electric','magnetic','momentum','pressure','density','circuit','lens','mirror','velocity','acceleration','inertia','friction','torque','ohm','ampere','volt','watt','newton','joule','gravity','mass','weight','pendulum','refraction','reflection'],
+    chemistry:['element','compound','reaction','bond','ion','molecule','acid','base','salt','solution','oxidation','reduction','periodic','valence','electron','proton','neutron','atomic','isotope','polymer','carbon','hydrogen','oxygen','nitrogen','metal','nonmetal','alloy','mixture','catalyst','ph','mole','equilibrium'],
+    biology:['cell','organ','tissue','evolution','ecosystem','food chain','organism','bacteria','virus','reproduc','heredity','gene','dna','rna','protein','enzyme','mitosis','meiosis','chlorophyll','photosyn','respir','digest','blood','heart','brain','nerve','muscle','bone','plant','animal','fungi','algae'],
+    history:['war','emperor','civiliz','dynasty','movement','independence','treaty','battle','king','queen','century','ancient','revolution','colonial','empire','medieval','republic','mughal','british','freedom','mahatma','gandhi','nehru','world war','french','american','industrial'],
+    geography:['climate','continent','country','ocean','river','mountain','desert','population','latitude','longitude','map','tectonic','erosion','sediment','rainfall','atmosphere','soil','forest','glacier','tide','monsoon','season','zone'],
+    computer:['algorithm','program','code','software','hardware','database','network','internet','binary','array','loop','function','class','object','compiler','cpu','ram','bit','byte','html','css','java','python','c++','data structure','stack','queue','tree','sorting','searching','os','operating','protocol','tcp','ip','http'],
+    english:['grammar','tense','verb','noun','adjective','sentence','paragraph','story','poetry','prose','adverb','preposition','conjunction','metaphor','simile','syntax','spelling','punctuation','essay','comprehension','vocabulary','idiom','phrase'],
+  };
+
+  let detectedSubject='';
+  for(const[sub,words] of Object.entries(subjectHints)){
+    if(words.some(w=>ql.includes(w))){ detectedSubject=sub; break; }
+  }
+  const enrolled=state.subjects||[];
+  const subMatch=enrolled.map(s=>s.toLowerCase()).find(s=>ql.includes(s));
+  const sub=detectedSubject||subMatch||'';
+  const subLabel=sub?sub.charAt(0).toUpperCase()+sub.slice(1):'';
+
+  if(subLabel){
+    return `<b>Great question about ${subLabel}! 🧠</b><br><br>You asked: <i>"${safeQ}"</i><br><br>`+
+      `📌 <b>Step 1 — Identify the concept:</b> What is the core idea being asked?<br><br>`+
+      `📌 <b>Step 2 — Recall key definitions & formulas</b> related to <b>${subLabel}</b>.<br><br>`+
+      `📌 <b>Step 3 — Apply & solve</b> step by step using your notes.<br><br>`+
+      `💡 <b>Tip:</b> Check your <b>${subLabel}</b> notes — you may have already covered this!<br><br>`+
+      `📚 Try asking more specifically — for example:<br>`+
+      `&nbsp;&nbsp;• <i>"Explain [specific topic] in ${subLabel}"</i><br>`+
+      `&nbsp;&nbsp;• <i>"What is the formula for [concept]?"</i><br>`+
+      `&nbsp;&nbsp;• <i>"How does [process] work?"</i>`;
+  }
+
+  // ══ LAYER 7: Generic helpful fallback ══
+  return `<b>I'm here to help! 🤖</b><br><br>You asked: <i>"${safeQ}"</i><br><br>`+
+    `I can answer questions about these topics — try asking like this:<br><br>`+
+    `&nbsp;&nbsp;• <i>"What is 5 × 9?"</i> or <i>"Solve 2x + 3 = 7"</i> (Maths)<br>`+
+    `&nbsp;&nbsp;• <i>"Explain Newton's third law"</i> (Physics)<br>`+
+    `&nbsp;&nbsp;• <i>"What is photosynthesis?"</i> (Biology)<br>`+
+    `&nbsp;&nbsp;• <i>"Explain Ohm's law"</i> (Physics)<br>`+
+    `&nbsp;&nbsp;• <i>"What is the French Revolution?"</i> (History)<br><br>`+
+    `📚 <b>I know:</b> Maths calculations · Newton's Laws · Photosynthesis · Ohm's Law · `+
+    `Quadratic Equations · DNA · French Revolution · Pythagoras · Periodic Table · `+
+    `Trigonometry · Water Cycle · Acids &amp; Bases · Machine Learning · and much more!<br><br>`+
+    `Keep asking — every question makes you smarter! 🌟`;
+}
+
+// ══ MATH CALCULATOR ENGINE ══
+function tryMath(q){
+  const raw=q.trim();
+
+  // Pattern 1: Pure arithmetic expressions like "1+2=", "5*9", "100/4", "2^10", "sqrt(16)"
+  // Also handle "what is 5+3", "calculate 12*4", "solve 7-2"
+  const mathPhrases=['what is','calculate','compute','evaluate','solve','find the value','value of','answer of'];
+  let expr=raw;
+  for(const p of mathPhrases){
+    if(expr.toLowerCase().startsWith(p)){
+      expr=expr.slice(p.length).trim();
+      break;
+    }
+  }
+
+  // Remove trailing = or ?
+  expr=expr.replace(/[=?]+$/, '').trim();
+
+  // Replace common written operators
+  expr=expr
+    .replace(/×/g,'*')
+    .replace(/÷/g,'/')
+    .replace(/\^/g,'**')
+    .replace(/x/gi, (m,offset,str)=>{
+      // Only replace 'x' as multiply if surrounded by numbers/spaces, not as variable
+      const before=str[offset-1];const after=str[offset+1];
+      if(before&&/[\d\s\)]/.test(before)&&after&&/[\d\s\(]/.test(after)) return '*';
+      return m;
+    })
+    .replace(/sqrt\s*\(/gi,'Math.sqrt(')
+    .replace(/\bsqrt\s+(\d+)/gi,'Math.sqrt($1)')
+    .replace(/\bsquare root of\s+(\d+)/gi,'Math.sqrt($1)')
+    .replace(/\bpi\b/gi,'Math.PI')
+    .replace(/\bsin\s*\(/gi,'Math.sin(')
+    .replace(/\bcos\s*\(/gi,'Math.cos(')
+    .replace(/\btan\s*\(/gi,'Math.tan(')
+    .replace(/\blog\s*\(/gi,'Math.log10(')
+    .replace(/\bln\s*\(/gi,'Math.log(');
+
+  // Only proceed if expression looks like math (contains digits + operators)
+  if(!/\d/.test(expr)) return null;
+  if(/[a-zA-Z]{2,}/.test(expr.replace(/Math\.\w+/g,''))) return null;
+
+  try{
+    // Safe eval — only allow math characters
+    const safe=expr.replace(/[^0-9+\-*/.()% MathsqrtpilogcnbPISIROTAGCLN]/g,'');
+    if(!safe.trim()) return null;
+    // eslint-disable-next-line no-new-func
+    const result=Function('"use strict"; return ('+safe+')')();
+    if(result===undefined||result===null||isNaN(result)||!isFinite(result)) return null;
+
+    // Format result nicely
+    const formatted=Number.isInteger(result)?result:parseFloat(result.toFixed(6));
+    const original=raw.replace(/[=?]+$/,'').trim();
+
+    return `<b>📐 Math Answer</b><br><br>`+
+      `<div style="background:rgba(59,158,255,.1);border:1px solid rgba(59,158,255,.2);border-radius:10px;padding:14px 18px;margin:8px 0;font-family:monospace;font-size:16px">`+
+      `<span style="color:var(--muted)">${safeHtml(original)} = </span><b style="color:var(--accent2);font-size:20px">${formatted}</b></div><br>`+
+      `✅ Calculated successfully!<br><br>`+
+      `💡 <b>Tip:</b> You can also ask me to <i>explain</i> the concept — e.g. <i>"Explain addition"</i>, <i>"How to do long division?"</i>, <i>"What is BODMAS?"</i>`;
+  } catch(e){
+    return null;
+  }
+}
+
+function safeHtml(s){ return s.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ══ TESTS ══
+function hasNoteForSubject(subject){
+  return state.notes.some(n=>n.subject===subject);
+}
+
+// Dynamic question generator for subjects not in TEST_BANK
+const DYNAMIC_QUESTIONS = {
+  Hindi:[
+    {q:"हिंदी वर्णमाला में कितने स्वर होते हैं?",opts:["11","13","10","15"],ans:0},
+    {q:"'राम' शब्द का बहुवचन क्या है?",opts:["रामों","राम","रामजन","रामगण"],ans:0},
+    {q:"संज्ञा के कितने भेद होते हैं?",opts:["5","3","4","6"],ans:0},
+    {q:"'सूरज' का पर्यायवाची शब्द क्या है?",opts:["दिनकर","चंद्र","तारा","नभ"],ans:0},
+    {q:"'आना' क्रिया का भूतकाल रूप क्या है?",opts:["आया","आएगा","आता","आ"],ans:0},
+    {q:"'पानी' शब्द का लिंग क्या है?",opts:["पुल्लिंग","स्त्रीलिंग","उभयलिंग","नपुंसकलिंग"],ans:0},
+    {q:"हिंदी की लिपि कौन सी है?",opts:["देवनागरी","रोमन","अरबी","गुरुमुखी"],ans:0},
+    {q:"'महाभारत' के रचयिता कौन हैं?",opts:["महर्षि व्यास","वाल्मीकि","तुलसीदास","कालिदास"],ans:0},
+    {q:"विशेषण किसकी विशेषता बताता है?",opts:["संज्ञा/सर्वनाम","क्रिया","विशेषण","अव्यय"],ans:0},
+    {q:"'गाय' शब्द का स्त्रीलिंग क्या है?",opts:["गाय","गायें","बैल","बछड़ा"],ans:0},
+  ],
+  Chemistry:[
+    {q:"What is the chemical symbol for Gold?",opts:["Au","Ag","Fe","Cu"],ans:0},
+    {q:"How many elements are in the Periodic Table?",opts:["118","108","128","98"],ans:0},
+    {q:"What is the pH of pure water?",opts:["7","5","9","11"],ans:0},
+    {q:"Which gas is produced when acid reacts with metal?",opts:["Hydrogen","Oxygen","Nitrogen","CO₂"],ans:0},
+    {q:"What is the chemical formula of common salt?",opts:["NaCl","KCl","CaCl₂","MgCl₂"],ans:0},
+    {q:"Atomic number of Carbon is?",opts:["6","8","12","4"],ans:0},
+    {q:"What type of bond is formed in NaCl?",opts:["Ionic","Covalent","Metallic","Hydrogen"],ans:0},
+    {q:"Which is the most electronegative element?",opts:["Fluorine","Oxygen","Chlorine","Nitrogen"],ans:0},
+    {q:"The process of converting ore to metal is called?",opts:["Smelting","Mining","Refining","Calcination"],ans:0},
+    {q:"Chemical formula of Baking Soda is?",opts:["NaHCO₃","Na₂CO₃","NaOH","NaCl"],ans:0},
+  ],
+  Biology:[
+    {q:"What is the powerhouse of the cell?",opts:["Mitochondria","Nucleus","Ribosome","Golgi body"],ans:0},
+    {q:"How many chambers does a human heart have?",opts:["4","2","3","6"],ans:0},
+    {q:"Which vitamin is produced by sunlight?",opts:["Vitamin D","Vitamin C","Vitamin A","Vitamin B"],ans:0},
+    {q:"The study of heredity is called?",opts:["Genetics","Ecology","Taxonomy","Physiology"],ans:0},
+    {q:"DNA is found in which part of the cell?",opts:["Nucleus","Cytoplasm","Cell wall","Vacuole"],ans:0},
+    {q:"Which blood group is universal donor?",opts:["O","A","B","AB"],ans:0},
+    {q:"The process by which cells divide is called?",opts:["Mitosis","Photosynthesis","Respiration","Digestion"],ans:0},
+    {q:"Insulin is produced by which organ?",opts:["Pancreas","Liver","Kidney","Spleen"],ans:0},
+    {q:"The largest organ in the human body is?",opts:["Skin","Liver","Brain","Lungs"],ans:0},
+    {q:"Which part of the plant prepares food?",opts:["Leaf","Root","Stem","Flower"],ans:0},
+  ],
+  Computer:[
+    {q:"Full form of CPU is?",opts:["Central Processing Unit","Computer Processing Unit","Central Program Unit","Core Processing Unit"],ans:0},
+    {q:"Which is the brain of a computer?",opts:["CPU","Monitor","Keyboard","RAM"],ans:0},
+    {q:"What does RAM stand for?",opts:["Random Access Memory","Read Access Memory","Random Array Memory","Read Array Memory"],ans:0},
+    {q:"Which language is closest to machine language?",opts:["Assembly","Python","Java","C++"],ans:0},
+    {q:"Full form of HTML is?",opts:["HyperText Markup Language","High Text Markup Language","HyperText Making Language","High Transfer Markup Language"],ans:0},
+    {q:"What is the binary equivalent of decimal 10?",opts:["1010","1001","1100","0110"],ans:0},
+    {q:"Which of these is an input device?",opts:["Keyboard","Monitor","Printer","Speaker"],ans:0},
+    {q:"1 Byte = ?",opts:["8 bits","4 bits","16 bits","2 bits"],ans:0},
+    {q:"Which protocol is used for email sending?",opts:["SMTP","HTTP","FTP","TCP"],ans:0},
+    {q:"Who invented the World Wide Web?",opts:["Tim Berners-Lee","Bill Gates","Steve Jobs","Dennis Ritchie"],ans:0},
+  ],
+  // Generic college subject question templates
+  'Mathematics I':[
+    {q:"What is the derivative of sin(x)?",opts:["cos(x)","-cos(x)","tan(x)","-sin(x)"],ans:0},
+    {q:"∫ x dx = ?",opts:["x²/2 + C","x² + C","2x + C","x/2 + C"],ans:0},
+    {q:"The value of e (Euler's number) is approximately?",opts:["2.718","3.142","1.618","2.302"],ans:0},
+    {q:"What is the determinant of an identity matrix?",opts:["1","0","-1","∞"],ans:0},
+    {q:"Limit of (sin x / x) as x → 0 is?",opts:["1","0","∞","-1"],ans:0},
+    {q:"The rank of a matrix is defined as?",opts:["Max linearly independent rows","Number of rows","Number of columns","Sum of diagonal elements"],ans:0},
+    {q:"What is the Laplace transform of 1?",opts:["1/s","s","1","1/s²"],ans:0},
+    {q:"The curl of a gradient is always?",opts:["Zero vector","Unit vector","Constant","Undefined"],ans:0},
+    {q:"Eigen values of I (identity matrix) are?",opts:["All 1s","All 0s","1 and -1","Undefined"],ans:0},
+    {q:"Taylor series expansion is used for?",opts:["Approximating functions","Solving ODEs","Matrix operations","Integration"],ans:0},
+  ],
+  'Data Structures':[
+    {q:"Which data structure uses LIFO principle?",opts:["Stack","Queue","Array","Tree"],ans:0},
+    {q:"Time complexity of binary search is?",opts:["O(log n)","O(n)","O(n²)","O(1)"],ans:0},
+    {q:"A complete binary tree with n leaves has how many nodes?",opts:["2n-1","n","n+1","2n"],ans:0},
+    {q:"Which traversal visits root first?",opts:["Pre-order","In-order","Post-order","Level-order"],ans:0},
+    {q:"Hash table collision can be resolved by?",opts:["Chaining","Sorting","Merging","Splitting"],ans:0},
+    {q:"Dijkstra's algorithm is used for?",opts:["Shortest path","Sorting","Searching","Hashing"],ans:0},
+    {q:"A queue is a ___ data structure.",opts:["Linear","Non-linear","Hierarchical","Graph"],ans:0},
+    {q:"What is the worst-case time for bubble sort?",opts:["O(n²)","O(n)","O(n log n)","O(log n)"],ans:0},
+    {q:"Linked list vs Array: Linked list is better for?",opts:["Insertion/Deletion","Random access","Sorting","Searching"],ans:0},
+    {q:"AVL tree is a type of?",opts:["Self-balancing BST","Heap","Graph","Hash table"],ans:0},
+  ],
+  'Operating Systems':[
+    {q:"What does OS stand for?",opts:["Operating System","Output System","Open System","Optical System"],ans:0},
+    {q:"Which scheduling algorithm gives minimum waiting time on average?",opts:["SJF","FCFS","Round Robin","Priority"],ans:0},
+    {q:"Deadlock can be prevented by?",opts:["Resource ordering","Increasing RAM","Faster CPU","More threads"],ans:0},
+    {q:"A process in 'waiting' state is waiting for?",opts:["I/O completion","CPU","Memory","None"],ans:0},
+    {q:"Virtual memory is implemented using?",opts:["Paging","Segmentation","Both","Neither"],ans:0},
+    {q:"Semaphore is used for?",opts:["Process synchronization","Memory management","CPU scheduling","File management"],ans:0},
+    {q:"Which is NOT a process state?",opts:["Compiling","Running","Waiting","Ready"],ans:0},
+    {q:"Page fault occurs when?",opts:["Page not in main memory","Page is corrupted","RAM is full","CPU is idle"],ans:0},
+    {q:"Thrashing means?",opts:["Excessive paging activity","CPU overload","Disk failure","Memory overflow"],ans:0},
+    {q:"UNIX was written in which language?",opts:["C","Assembly","Pascal","FORTRAN"],ans:0},
+  ],
+  'Database Management System':[
+    {q:"DBMS stands for?",opts:["Database Management System","Data Base Memory System","Digital Base Management System","Database Multiple System"],ans:0},
+    {q:"Primary key must be?",opts:["Unique and NOT NULL","Unique only","NOT NULL only","Indexed"],ans:0},
+    {q:"SQL stands for?",opts:["Structured Query Language","Simple Query Language","Sequential Query Language","Standard Query Language"],ans:0},
+    {q:"Which normal form removes transitive dependency?",opts:["3NF","1NF","2NF","BCNF"],ans:0},
+    {q:"ACID properties stand for?",opts:["Atomicity, Consistency, Isolation, Durability","Accuracy, Consistency, Integrity, Durability","Atomicity, Clarity, Isolation, Data","None of the above"],ans:0},
+    {q:"Which SQL command is used to remove a table?",opts:["DROP","DELETE","REMOVE","TRUNCATE"],ans:0},
+    {q:"An ER diagram represents?",opts:["Entity-Relationship model","Execution-Result model","Error-Recovery model","Electronic-Record model"],ans:0},
+    {q:"JOIN operation combines data from?",opts:["Two or more tables","One table","Only views","Stored procedures"],ans:0},
+    {q:"Index in DBMS is used to?",opts:["Speed up data retrieval","Add data","Delete data","Modify schema"],ans:0},
+    {q:"DCL stands for?",opts:["Data Control Language","Data Create Language","Dynamic Control Language","Database Command Language"],ans:0},
+  ],
+  'Computer Networks':[
+    {q:"OSI model has how many layers?",opts:["7","5","4","6"],ans:0},
+    {q:"IP address version 4 (IPv4) is how many bits?",opts:["32","64","128","16"],ans:0},
+    {q:"HTTP uses which port by default?",opts:["80","21","25","443"],ans:0},
+    {q:"DNS stands for?",opts:["Domain Name System","Data Network Service","Digital Name System","Dynamic Network Server"],ans:0},
+    {q:"Which layer handles routing in OSI model?",opts:["Network layer","Transport layer","Data link layer","Physical layer"],ans:0},
+    {q:"TCP is a ___ protocol.",opts:["Connection-oriented","Connectionless","Datagram","Broadcast"],ans:0},
+    {q:"MAC address is a ___ address.",opts:["Physical/Hardware","Logical","Virtual","IP"],ans:0},
+    {q:"Which protocol assigns IP addresses automatically?",opts:["DHCP","DNS","FTP","HTTP"],ans:0},
+    {q:"The default subnet mask for Class C is?",opts:["255.255.255.0","255.255.0.0","255.0.0.0","255.255.255.255"],ans:0},
+    {q:"Bandwidth is measured in?",opts:["bps (bits per second)","Hertz","Watts","Bytes"],ans:0},
+  ],
+};
+
+// Returns questions for any subject — from TEST_BANK, DYNAMIC_QUESTIONS, or generates generic ones
+function getTestQuestions(subject){
+  if(TEST_BANK[subject]) return TEST_BANK[subject];
+  if(DYNAMIC_QUESTIONS[subject]) return DYNAMIC_QUESTIONS[subject];
+  // For any other subject (especially MAKAUT subjects), generate generic conceptual questions
+  const s=subject;
+  return [
+    {q:`What is the primary focus of ${s}?`,opts:[`Core concepts of ${s}`,`Unrelated to ${s}`,`History only`,`None of the above`],ans:0},
+    {q:`Which of the following best describes ${s}?`,opts:[`A fundamental subject in the curriculum`,`An optional activity`,`A physical sport`,`A social event`],ans:0},
+    {q:`${s} is studied in which field?`,opts:[`Academic / Engineering curriculum`,`Only in school`,`Only in arts`,`Not studied anywhere`],ans:0},
+    {q:`A student studying ${s} should primarily focus on?`,opts:[`Understanding core principles`,`Memorizing only`,`Skipping practicals`,`Avoiding projects`],ans:0},
+    {q:`The application of ${s} in real life is?`,opts:[`Very broad and practical`,`Extremely limited`,`Only theoretical`,`Restricted to labs`],ans:0},
+    {q:`Examinations in ${s} typically test?`,opts:[`Conceptual understanding & problem-solving`,`Only definitions`,`Only history`,`General knowledge`],ans:0},
+    {q:`Which skill is most important for ${s}?`,opts:[`Analytical thinking`,`Physical strength`,`Social skills only`,`Drawing only`],ans:0},
+    {q:`${s} assignments usually involve?`,opts:[`Problem-solving and projects`,`Only reading`,`Only singing`,`Physical exercise`],ans:0},
+    {q:`A good foundation in ${s} helps in?`,opts:[`Advanced studies and career`,`Only hobbies`,`Cooking`,`Nothing else`],ans:0},
+    {q:`Learning ${s} requires?`,opts:[`Consistent study and practice`,`Only one-time reading`,`No effort`,`Random guessing`],ans:0},
+  ];
+}
+
+function buildTestList(){
+  const c=document.getElementById('testList');
+  // Use ALL subjects from login — not just those in TEST_BANK
+  const subjects=state.subjects;
+  if(!subjects||!subjects.length){
+    c.innerHTML='<div style="color:var(--muted);font-size:13px">No subjects found. Please log in and select your subjects.</div>';
+    return;
+  }
+
+  const icons={
+    Maths:'📐',Science:'🔬',Physics:'⚡',English:'📖',Hindi:'🗣️',Chemistry:'🧪',
+    Biology:'🌿',Computer:'💻','Mathematics I':'📐','Mathematics II':'📐',
+    'Data Structures':'🗂️','Operating Systems':'🖥️','Database Management System':'🗄️',
+    'Computer Networks':'🌐','Algorithms':'⚙️','Software Engineering':'🛠️',
+    'Machine Learning':'🤖','Cloud Computing':'☁️','Information Security':'🔐',
+    'Signals & Systems':'📡','Digital Electronics':'⚡','VLSI Design':'🔲',
+    'Thermodynamics':'🔥','Fluid Mechanics':'💧','Strength of Materials':'🏗️',
+    'Structural Analysis':'🏛️','Managerial Economics':'📊','Marketing Management':'📣',
+    'Financial Management':'💰','Human Resource Management':'👥',
+  };
+
+  const hasAnyNote=subjects.some(s=>hasNoteForSubject(s));
+  let html='';
+
+  if(!hasAnyNote){
+    html+=`<div style="background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:14px;padding:20px 22px;margin-bottom:18px;display:flex;align-items:flex-start;gap:14px">
+      <span style="font-size:28px;flex-shrink:0">📝</span>
+      <div>
+        <div style="font-family:var(--fh);font-size:15px;font-weight:700;color:var(--warn);margin-bottom:5px">Write Notes First!</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">Save at least one note for a subject to unlock its test paper. Go to <b style="color:var(--accent)">My Notes</b>, write your study notes, then come back here.</div>
+        <button class="btn sm" style="margin-top:12px" onclick="nav('notes',document.querySelector('[onclick*=notes]'))">Go to Notes →</button>
+      </div>
+    </div>`;
+  }
+
+  html+=subjects.map(s=>{
+    const done=state.results.find(r=>r.subject===s);
+    const unlocked=hasNoteForSubject(s);
+    const noteCount=state.notes.filter(n=>n.subject===s).length;
+    const icon=icons[s]||'📋';
+    if(unlocked){
+      return `<div class="test-item" onclick="startExam('${s.replace(/'/g,"\\'")}')">
+        <div class="ti-icon">${icon}</div>
+        <div class="ti-info">
+          <div class="ti-title">${s} Test Paper</div>
+          <div class="ti-meta">10 Questions · 20 Minutes · MCQ &nbsp;·&nbsp; <span style="color:var(--accent2)">📝 ${noteCount} note${noteCount>1?'s':''} saved ✅</span></div>
+        </div>
+        <div class="ti-badge ${done?'done':'new'}">${done?'✅ Retake':'🆕 Start'}</div>
+      </div>`;
+    } else {
+      return `<div class="test-item" style="opacity:.55;cursor:not-allowed" onclick="showToast('⚠️ Write a note for ${s} first!','var(--warn)')">
+        <div class="ti-icon">🔒</div>
+        <div class="ti-info">
+          <div class="ti-title" style="color:var(--muted)">${s} Test Paper</div>
+          <div class="ti-meta" style="color:var(--warn)">⚠️ Save 1 note for ${s} to unlock this test</div>
+        </div>
+        <div class="ti-badge" style="background:rgba(122,143,184,.08);border-color:rgba(122,143,184,.18);color:var(--muted)">🔒 Locked</div>
+      </div>`;
+    }
+  }).join('');
+
+  c.innerHTML=html;
+}
+function startExam(subject){
+  state.currentExam=subject;
+  state.examAnswers={};
+  document.getElementById('testListView').classList.add('hidden');
+  document.getElementById('examView').classList.remove('hidden');
+  document.getElementById('examTitle').textContent=`${subject} — Test Paper`;
+  document.getElementById('examMeta').textContent='10 Questions · 20:00 Minutes';
+
+  const qs=getTestQuestions(subject);
+  const qc=document.getElementById('questionsContainer');
+  qc.innerHTML=qs.map((q,i)=>`
+    <div class="q-card">
+      <div class="q-num">Question ${i+1} of ${qs.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-options">
+        ${q.opts.map((o,j)=>`<div class="q-opt" id="q${i}o${j}" onclick="selectOpt(${i},${j})">
+          <input type="radio" name="q${i}" value="${j}"/> ${o}
+        </div>`).join('')}
+      </div>
+    </div>`).join('');
+
+  state.examTimeLeft=1200;
+  if(state.examTimer)clearInterval(state.examTimer);
+  state.examTimer=setInterval(()=>{
+    state.examTimeLeft--;
+    const m=Math.floor(state.examTimeLeft/60).toString().padStart(2,'0');
+    const s=(state.examTimeLeft%60).toString().padStart(2,'0');
+    document.getElementById('examTimer').textContent=`${m}:${s}`;
+    if(state.examTimeLeft<=0){clearInterval(state.examTimer);submitExam();}
+  },1000);
+}
+function selectOpt(qi,oi){
+  const qs=getTestQuestions(state.currentExam);
+  for(let j=0;j<qs[qi].opts.length;j++) document.getElementById(`q${qi}o${j}`)?.classList.remove('selected');
+  document.getElementById(`q${qi}o${oi}`)?.classList.add('selected');
+  state.examAnswers[qi]=oi;
+}
+function cancelExam(){
+  clearInterval(state.examTimer);
+  document.getElementById('examView').classList.add('hidden');
+  document.getElementById('testListView').classList.remove('hidden');
+}
+function submitExam(){
+  clearInterval(state.examTimer);
+  const qs=getTestQuestions(state.currentExam);
+  let score=0;
+  qs.forEach((q,i)=>{if(state.examAnswers[i]===q.ans)score++;});
+  const pct=Math.round(score/qs.length*100);
+  const grade=pct>=90?'A+':pct>=80?'A':pct>=70?'B+':pct>=60?'B':pct>=50?'C':'F';
+  state.results.unshift({subject:state.currentExam,score,total:qs.length,date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),grade,pct});
+  addActivity(`Completed ${state.currentExam} test — ${score}/${qs.length} (${grade})`,'#a855f7');
+  document.getElementById('examView').classList.add('hidden');
+  document.getElementById('testListView').classList.remove('hidden');
+  buildTestList();
+  nav('results',document.querySelector('[onclick*="results"]'));
+}
+
+// ══ TOAST ══
+function showToast(msg,color){
+  const t=document.createElement('div');
+  t.style.cssText=`position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid ${color||'var(--accent)'};color:var(--text);padding:12px 22px;border-radius:100px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:up .3s ease both;white-space:nowrap`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3200);
+}
+
+// ══ RESULTS ══
+function buildResults(){
+  const c=document.getElementById('resultContent');
+
+  // Gate: show locked state if no notes at all
+  const subjectsWithNotes=state.subjects.filter(s=>hasNoteForSubject(s));
+  if(subjectsWithNotes.length===0){
+    c.innerHTML=`<div style="background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:14px;padding:28px 24px;display:flex;align-items:flex-start;gap:16px">
+      <span style="font-size:32px;flex-shrink:0">🏆</span>
+      <div>
+        <div style="font-family:var(--fh);font-size:16px;font-weight:700;color:var(--warn);margin-bottom:6px">Results Locked</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7">Your test results will appear here after you:<br>
+        <b style="color:var(--text)">1.</b> Write and save notes for a subject in <b style="color:var(--accent)">My Notes</b><br>
+        <b style="color:var(--text)">2.</b> Take the test for that subject in <b style="color:var(--accent)">Test Papers</b></div>
+        <button class="btn sm" style="margin-top:14px" onclick="nav('notes',document.querySelector('[onclick*=notes]'))">Go to Notes →</button>
+      </div>
+    </div>`;
+    return;
+  }
+
+  if(!state.results.length){
+    c.innerHTML=`<div style="background:rgba(59,158,255,.06);border:1px solid rgba(59,158,255,.2);border-radius:14px;padding:24px;display:flex;align-items:flex-start;gap:14px">
+      <span style="font-size:28px;flex-shrink:0">📋</span>
+      <div>
+        <div style="font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:5px">Notes Saved — Now Take a Test!</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">Great work saving your notes! Your results will appear here after you complete a test. Head to <b style="color:var(--accent)">Test Papers</b> to start.</div>
+        <button class="btn sm" style="margin-top:12px" onclick="nav('tests',document.querySelector('[onclick*=tests]'))">Go to Tests →</button>
+      </div>
+    </div>`;
+    return;
+  }
+
+  const avg=Math.round(state.results.reduce((a,r)=>a+(r.score/r.total*100),0)/state.results.length);
+  const gradeCol={'A+':'#22c55e','A':'#3b9eff','B+':'#00e5c3','B':'#f59e0b','C':'#f97316','F':'#ff5e7a'};
+  const best=state.results.reduce((a,b)=>a.score/a.total>b.score/b.total?a:b);
+
+  c.innerHTML=`
+  <div class="g3 mb16">
+    <div class="stat-card ac"><div class="sc-icon">📊</div><div class="sc-val">${avg}%</div><div class="sc-lab">Average Score</div></div>
+    <div class="stat-card a2"><div class="sc-icon">🏆</div><div class="sc-val">${best.grade}</div><div class="sc-lab">Best Grade (${best.subject})</div></div>
+    <div class="stat-card a3"><div class="sc-icon">📋</div><div class="sc-val">${state.results.length}</div><div class="sc-lab">Tests Taken</div></div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-title">📋 All Test Results</div>
+    <table class="result-table">
+      <thead><tr><th>Subject</th><th>Score</th><th>Percentage</th><th>Grade</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>
+        ${state.results.map(r=>{const p=Math.round(r.score/r.total*100);return`
+        <tr>
+          <td><b>${r.subject}</b></td>
+          <td>${r.score}/${r.total}</td>
+          <td><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden"><div style="height:100%;width:${p}%;background:${gradeCol[r.grade]||'var(--accent)'};border-radius:3px"></div></div>${p}%</div></td>
+          <td><span style="font-family:var(--fh);font-size:15px;font-weight:800;color:${gradeCol[r.grade]||'var(--accent)'}">${r.grade}</span></td>
+          <td style="color:var(--muted)">${r.date}</td>
+          <td><span class="pill ${p>=40?'pass':'fail'}">${p>=40?'Pass':'Fail'}</span></td>
+        </tr>`}).join('')}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="parent-card">
+    <h3>📱 Parent Report Card</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">This report is shared with your parent / guardian's registered phone number.</p>
+    <div style="background:rgba(13,18,32,.6);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:13px">
+      <div style="font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:12px">📊 EdTech AI — Student Report</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="color:var(--muted)">Student: <span style="color:var(--text);font-weight:600">${state.studentName}</span></div>
+        <div style="color:var(--muted)">Class: <span style="color:var(--text);font-weight:600">${state.studentClass}</span></div>
+        <div style="color:var(--muted)">Average: <span style="color:var(--accent2);font-weight:700">${avg}%</span></div>
+        <div style="color:var(--muted)">Tests Taken: <span style="color:var(--text);font-weight:600">${state.results.length}</span></div>
+      </div>
+      ${state.results.slice(0,3).map(r=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid rgba(99,179,255,.07);color:var(--muted)"><span>${r.subject}</span><span style="color:${gradeCol[r.grade]||'var(--accent)'};font-weight:700">${r.score}/${r.total} (${r.grade})</span></div>`).join('')}
+    </div>
+    <button class="btn sm success" style="margin-top:14px" onclick="alert('📱 Report sent to parent via SMS & email!')">📤 Send Report to Parent</button>
+  </div>`;
+}
+
+// ══ ATTENDANCE ══
+function buildAttendance(){
+  const c=document.getElementById('attContainer');
+  const subjectColors={Maths:'#3b9eff',Science:'#00e5c3',Physics:'#ec4899',English:'#a855f7',Hindi:'#f59e0b',Chemistry:'#22c55e',Biology:'#06b6d4',Computer:'#f97316'};
+
+  const subjectsWithNotes=state.subjects.filter(s=>hasNoteForSubject(s));
+  const subjectsLocked=state.subjects.filter(s=>!hasNoteForSubject(s));
+
+  if(subjectsWithNotes.length===0){
+    c.innerHTML=`<div style="background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:14px;padding:28px 24px;display:flex;align-items:flex-start;gap:16px">
+      <span style="font-size:32px;flex-shrink:0">📅</span>
+      <div>
+        <div style="font-family:var(--fh);font-size:16px;font-weight:700;color:var(--warn);margin-bottom:6px">No Attendance Yet</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.8">Attendance is recorded <b style="color:var(--text)">automatically</b> every time you save a note for a subject.<br>Each note you write = <b style="color:var(--accent2)">1 Present day</b> marked for that subject.<br><br>Go to <b style="color:var(--accent)">My Notes</b>, save your first note, and your attendance will appear here instantly.</div>
+        <button class="btn sm" style="margin-top:14px" onclick="nav('notes',document.querySelector('[onclick*=notes]'))">Go to Notes →</button>
+      </div>
+    </div>`;
+    return;
+  }
+
+  let html='';
+
+  // Summary card at top
+  const totalDays=subjectsWithNotes.reduce((a,s)=>(state.attendance[s]||[]).length+a,0);
+  html+=`<div style="background:linear-gradient(135deg,rgba(59,158,255,.08),rgba(0,229,195,.06));border:1px solid rgba(59,158,255,.2);border-radius:14px;padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+    <div style="text-align:center;min-width:70px">
+      <div style="font-family:var(--fh);font-size:30px;font-weight:800;color:var(--accent2)">${totalDays}</div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Total Days<br>Present</div>
+    </div>
+    <div style="width:1px;height:44px;background:var(--border)"></div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.7;flex:1">
+      📝 <b style="color:var(--text)">How it works:</b> Every note you save marks you <b style="color:var(--success)">Present</b> for that subject on that day.<br>
+      Save more notes to build your attendance record!
+    </div>
+  </div>`;
+
+  // Locked subjects banner
+  if(subjectsLocked.length>0){
+    html+=`<div style="background:rgba(122,143,184,.06);border:1px solid rgba(122,143,184,.15);border-radius:12px;padding:12px 18px;margin-bottom:16px;font-size:13px;display:flex;align-items:center;gap:10px">
+      <span>🔒</span>
+      <span style="color:var(--muted)">Attendance for <b style="color:var(--text)">${subjectsLocked.join(', ')}</b> will appear once you save notes for those subjects.</span>
+    </div>`;
+  }
+
+  // Per-subject attendance rows
+  html+=subjectsWithNotes.map(sub=>{
+    const days=state.attendance[sub]||[];
+    const col=subjectColors[sub]||'var(--accent)';
+    const total=days.length;
+    return `<div class="att-subject-row">
+      <div class="att-top">
+        <div class="att-name" style="color:${col}">
+          <span style="width:10px;height:10px;border-radius:3px;background:${col};display:inline-block"></span>
+          ${sub}
+          <span style="font-size:10px;padding:2px 8px;border-radius:100px;background:rgba(34,197,94,.12);color:var(--success);font-family:var(--fh);border:1px solid rgba(34,197,94,.2)">✅ ${total} day${total>1?'s':''} present</span>
+        </div>
+        <div style="text-align:right">
+          <div class="att-pct" style="color:var(--success)">${total} / ${total}</div>
+          <div style="font-size:11px;color:var(--muted)">100% present</div>
+        </div>
+      </div>
+      <div class="att-bar-bg"><div class="att-bar" style="width:100%;background:linear-gradient(90deg,${col},${col}aa)"></div></div>
+      <div class="att-days" style="margin-top:12px">
+        ${days.map(d=>`<div class="att-day p" title="Day ${d.dayNum} · ${d.date}&#10;Note: ${d.noteTitle}">${d.dayNum}</div>`).join('')}
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--muted)">
+        ${days.map(d=>`<div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid rgba(99,179,255,.05)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--success);flex-shrink:0"></span>
+          <span>Day ${d.dayNum} · ${d.date} · <span style="color:var(--text)">"${esc(d.noteTitle)}"</span></span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  c.innerHTML=html;
+}
+
+// ══ DASHBOARD UPDATE ══
+let activities=[];
+function addActivity(text,color){
+  activities.unshift({text,color,time:'Just now'});
+  if(activities.length>8)activities.pop();
+  updateDashboard();
+}
+function updateDashboard(){
+  document.getElementById('d-notes').textContent=state.notes.length;
+  document.getElementById('d-tests').textContent=state.results.length;
+  const avg=state.results.length?Math.round(state.results.reduce((a,r)=>a+(r.score/r.total*100),0)/state.results.length)+'%':'—';
+  document.getElementById('d-avg').textContent=avg;
+
+  // Attendance: count total present days from real note-based records only
+  const totalPresent=state.subjects.reduce((a,s)=>(state.attendance[s]||[]).length+a,0);
+  document.getElementById('d-att').textContent=totalPresent>0?totalPresent+' day'+(totalPresent>1?'s':''):'—';
+
+  const dn=document.getElementById('dashNotes');
+  if(state.notes.length){
+    dn.innerHTML=state.notes.slice(0,3).map(n=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(99,179,255,.06)"><span style="width:8px;height:8px;border-radius:50%;background:${SCOL[n.subject]||'var(--accent)'};flex-shrink:0"></span><div><div style="font-size:13px;font-weight:500">${esc(n.title)}</div><div style="font-size:11px;color:var(--muted)">${n.subject} · ${n.date}</div></div></div>`).join('')+`<a href="#" onclick="nav('notes',null)" style="font-size:12px;color:var(--accent);text-decoration:none;display:block;margin-top:8px">View all notes →</a>`;
+  } else {dn.innerHTML='<div style="font-size:13px;color:var(--muted)">No notes yet. <a href="#" onclick="nav(\'notes\',null)" style="color:var(--accent)">Add your first note →</a></div>';}
+
+  const da=document.getElementById('dashActivity');
+  if(!activities.length){da.innerHTML='<div style="font-size:13px;color:var(--muted)">No activity yet. Start by taking a test or adding notes!</div>';return;}
+  da.innerHTML=activities.map(a=>`<div class="activity-item"><div class="ai-dot" style="background:${a.color}"></div><div><div class="ai-txt">${esc(a.text)}</div><div class="ai-time">${a.time}</div></div></div>`).join('');
+}
+updateDashboard();
+
+// ══ LIVE CLOCK & TIME-BASED GREETING ══
+let clockInterval=null;
+
+function getTimeInfo(){
+  const now=new Date();
+  const h=now.getHours();
+  const m=now.getMinutes();
+  const s=now.getSeconds();
+  const ampm=h<12?'AM':'PM';
+  const h12=h%12||12;
+  const timeStr=`${String(h12).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} ${ampm}`;
+
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dateStr=`${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+  let period,greeting,icon,bannerClass,periodClass,motiveLine;
+  if(h>=5&&h<12){
+    period='Morning'; greeting='Good Morning'; icon='🌅';
+    bannerClass='wb-morning'; periodClass='period-morning';
+    motiveLine='Start your day strong — a little learning goes a long way! ☀️';
+  } else if(h>=12&&h<17){
+    period='Afternoon'; greeting='Good Afternoon'; icon='☀️';
+    bannerClass='wb-afternoon'; periodClass='period-afternoon';
+    motiveLine='Keep the momentum going — great things take consistent effort! 📚';
+  } else if(h>=17&&h<21){
+    period='Evening'; greeting='Good Evening'; icon='🌇';
+    bannerClass='wb-evening'; periodClass='period-evening';
+    motiveLine='Evening study is powerful — your brain retains more at night! 🌆';
+  } else {
+    period='Night'; greeting='Good Night'; icon='🌙';
+    bannerClass='wb-night'; periodClass='period-night';
+    motiveLine='Burning the midnight oil? Take breaks and stay hydrated! 🌙';
+  }
+  return {timeStr,dateStr,period,greeting,icon,bannerClass,periodClass,motiveLine};
+}
+
+function tickClock(){
+  const info=getTimeInfo();
+  // Student dashboard clock
+  const clockEl=document.getElementById('liveClock');
+  const dateEl=document.getElementById('liveDate');
+  const periodEl=document.getElementById('livePeriod');
+  const iconEl=document.getElementById('wbIcon');
+  const bannerEl=document.getElementById('welcomeBanner');
+  const greetEl=document.getElementById('dashGreet');
+  const subEl=document.getElementById('dashSub');
+  if(clockEl) clockEl.textContent=info.timeStr;
+  if(dateEl) dateEl.textContent=info.dateStr;
+  if(periodEl){ periodEl.textContent=info.period; periodEl.className='live-period '+info.periodClass; }
+  if(iconEl) iconEl.textContent=info.icon;
+  if(bannerEl){
+    const allBanners=['wb-morning','wb-afternoon','wb-evening','wb-night'];
+    if(!bannerEl.classList.contains(info.bannerClass)){
+      allBanners.forEach(c=>bannerEl.classList.remove(c));
+      bannerEl.classList.add(info.bannerClass);
+    }
+  }
+  const name=state.studentName||'Student';
+  if(greetEl) greetEl.textContent=`${info.greeting}, ${name}! ${info.icon}`;
+  if(subEl && subEl.dataset.lastMin===undefined){
+    subEl.textContent=info.motiveLine;
+    subEl.dataset.lastMin=String(new Date().getMinutes());
+  }
+
+  // Parent dashboard clock
+  const pClock=document.getElementById('pLiveClock');
+  const pDate=document.getElementById('pLiveDate');
+  const pPeriod=document.getElementById('pLivePeriod');
+  if(pClock) pClock.textContent=info.timeStr;
+  if(pDate) pDate.textContent=info.dateStr;
+  if(pPeriod){ pPeriod.textContent=info.period; pPeriod.className='live-period '+info.periodClass; }
+
+  // Teacher dashboard clock
+  const tClock=document.getElementById('tLiveClock');
+  const tDate=document.getElementById('tLiveDate');
+  const tPeriod=document.getElementById('tLivePeriod');
+  if(tClock) tClock.textContent=info.timeStr;
+  if(tDate) tDate.textContent=info.dateStr;
+  if(tPeriod){ tPeriod.textContent=info.period; tPeriod.className='live-period '+info.periodClass; }
+}
+
+function startLiveClock(){
+  tickClock(); // run immediately
+  if(clockInterval) clearInterval(clockInterval);
+  clockInterval=setInterval(tickClock,1000);
+}
+
+function stopLiveClock(){
+  if(clockInterval){ clearInterval(clockInterval); clockInterval=null; }
+}
+
+// Start clock immediately so it shows even before login
+startLiveClock();
+</script>
 </body>
 </html>
